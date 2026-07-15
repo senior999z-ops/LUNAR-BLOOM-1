@@ -59,17 +59,29 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden items-center gap-8 lg:flex">
-            {NAV_LINKS.map((link) => (
-              <Link
+          {/* Desktop nav - floating pill buttons */}
+          <div className="hidden items-center gap-5 lg:flex">
+            {NAV_LINKS.map((link, i) => (
+              <motion.div
                 key={link.href}
-                href={link.href}
-                className="group relative font-sans text-sm tracking-wide text-brown/80 dark:text-cream/80 transition-colors hover:text-brown dark:hover:text-cream"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + i * 0.08, duration: 0.5 }}
+                whileHover={{ y: -3, scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                {link.label}
-                <span className="absolute -bottom-1 left-0 h-px w-0 bg-gradient-to-r from-gold to-gold-light transition-all duration-300 group-hover:w-full" />
-              </Link>
+                <Link
+                  href={link.href}
+                  className={cn(
+                    'block rounded-full px-5 py-2.5 font-sans text-sm tracking-wide shadow-md transition-all duration-300',
+                    pathname === link.href
+                      ? 'bg-gradient-to-r from-gold-dark via-gold to-gold-light text-brown-dark'
+                      : 'glass-strong text-brown/80 hover:text-brown dark:text-cream/80 dark:hover:text-cream'
+                  )}
+                >
+                  {link.label}
+                </Link>
+              </motion.div>
             ))}
           </div>
 

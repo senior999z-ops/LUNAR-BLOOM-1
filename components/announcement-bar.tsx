@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 
 const ITEMS = [
   'Free Delivery Across Pakistan',
-  'New Bridal Collection 2026',
   'Eid Edit Now Live',
   'Handcrafted in Lahore',
   'Made to Measure Available',
