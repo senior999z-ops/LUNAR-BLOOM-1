@@ -15,6 +15,7 @@ import { CartDrawer } from '@/components/cart-drawer';
 import { BackToTop } from '@/components/back-to-top';
 import { FloatingWhatsApp } from '@/components/floating-whatsapp';
 import { NewsletterPopup } from '@/components/newsletter-popup';
+import { FloatingBackButton } from '@/components/floating-back-button';
 import { usePathname } from 'next/navigation';
 
 export interface CartItem {
@@ -155,6 +156,7 @@ function PageTransition({ children }: { children: ReactNode }) {
 export function Providers({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
+  const isHome = pathname === '/';
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 2600);
@@ -173,17 +175,18 @@ export function Providers({ children }: { children: ReactNode }) {
           <WishlistProvider>
             <div className="custom-cursor-active relative min-h-screen overflow-x-hidden">
               <GlobalBackground />
-              <ScrollProgress />
+              {!isHome && <ScrollProgress />}
               <AnimatePresence>{loading && <Loader key="loader" />}</AnimatePresence>
               {!loading && (
                 <>
                   <CustomCursor />
-                  <AnnouncementBar />
-                  <Navbar />
+                  {!isHome && <AnnouncementBar />}
+                  {!isHome && <Navbar />}
+                  {!isHome && <FloatingBackButton key={pathname} />}
                   <PageTransition>{children}</PageTransition>
-                  <Footer />
+                  {!isHome && <Footer />}
                   <CartDrawer />
-                  <BackToTop />
+                  {!isHome && <BackToTop />}
                   <FloatingWhatsApp />
                   <NewsletterPopup />
                 </>

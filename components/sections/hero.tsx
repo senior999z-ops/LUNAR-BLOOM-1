@@ -8,6 +8,13 @@ export function Hero() {
   const router = useRouter();
   const [revealed, setRevealed] = useState(false);
   const [hovering, setHovering] = useState(false);
+  const [clicked, setClicked] = useState(false);
+
+  const handleEnter = () => {
+    if (clicked) return;
+    setClicked(true);
+    setTimeout(() => router.push('/collections'), 650);
+  };
 
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -35,7 +42,6 @@ export function Hero() {
 
   return (
     <section className="relative flex h-screen items-center justify-center overflow-hidden">
-      {/* Stars */}
       <div className="absolute inset-0">
         {stars.map((s) => (
           <motion.div
@@ -48,7 +54,6 @@ export function Hero() {
         ))}
       </div>
 
-      {/* Moon glow */}
       <motion.div
         style={{ x: sx, y: sy }}
         className="absolute top-[10%] right-[8%] z-[1]"
@@ -68,7 +73,6 @@ export function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* Veil split open */}
       <motion.div
         className="absolute inset-0 z-[15] bg-brown-dark"
         initial={{ clipPath: 'inset(0% 0% 0% 0%)' }}
@@ -82,7 +86,6 @@ export function Hero() {
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
       />
 
-      {/* ONLY: LUNAR BLOOM + TOUCH ME PLEASE button */}
       <div className="relative z-20 flex flex-col items-center px-6 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
@@ -102,31 +105,58 @@ export function Hero() {
           onMouseLeave={() => setHovering(false)}
         >
           <button
-            onClick={() => router.push('/collections')}
+            onClick={handleEnter}
             data-cursor-label="enter"
+            disabled={clicked}
             className="group relative inline-flex items-center justify-center"
           >
-            {/* Pulsing rings */}
-            <motion.span
-              className="absolute inset-0 rounded-full border border-gold/30"
-              animate={{ scale: [1, 1.5], opacity: [0.6, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
-            />
-            <motion.span
-              className="absolute inset-0 rounded-full border border-gold/20"
-              animate={{ scale: [1, 1.8], opacity: [0.4, 0] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 0.5, ease: 'easeOut' }}
-            />
-            <motion.span
-              className="absolute inset-0 rounded-full border border-gold/10"
-              animate={{ scale: [1, 2.1], opacity: [0.3, 0] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 1, ease: 'easeOut' }}
-            />
+            {!clicked && (
+              <>
+                <motion.span
+                  className="absolute inset-0 rounded-full border border-gold/30"
+                  animate={{ scale: [1, 1.5], opacity: [0.6, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+                />
+                <motion.span
+                  className="absolute inset-0 rounded-full border border-gold/20"
+                  animate={{ scale: [1, 1.8], opacity: [0.4, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.5, ease: 'easeOut' }}
+                />
+                <motion.span
+                  className="absolute inset-0 rounded-full border border-gold/10"
+                  animate={{ scale: [1, 2.1], opacity: [0.3, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 1, ease: 'easeOut' }}
+                />
+              </>
+            )}
 
-            {/* Button */}
+            {clicked && (
+              <>
+                {[...Array(10)].map((_, i) => (
+                  <motion.span
+                    key={i}
+                    className="absolute left-1/2 top-1/2 h-1 w-16 origin-left rounded-full bg-gold"
+                    initial={{ opacity: 1, scale: 0 }}
+                    animate={{ opacity: [1, 0], scale: [0, 2.2] }}
+                    transition={{ duration: 0.65, ease: 'easeOut' }}
+                    style={{ rotate: (i / 10) * 360 }}
+                  />
+                ))}
+                <motion.span
+                  className="absolute inset-0 rounded-full bg-gold/40"
+                  initial={{ scale: 1, opacity: 0.6 }}
+                  animate={{ scale: 5, opacity: 0 }}
+                  transition={{ duration: 0.65, ease: 'easeOut' }}
+                />
+              </>
+            )}
+
             <motion.span
-              animate={{ scale: hovering ? 1.08 : 1 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              animate={{
+                scale: clicked ? [1, 1.15, 0.85] : hovering ? 1.08 : 1,
+                opacity: clicked ? [1, 1, 0] : 1,
+              }}
+              transition={{ duration: clicked ? 0.65 : 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="relative flex items-center gap-3 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-12 py-5 text-sm font-medium uppercase tracking-[0.3em] text-brown-dark shadow-xl"
             >
               touch me please

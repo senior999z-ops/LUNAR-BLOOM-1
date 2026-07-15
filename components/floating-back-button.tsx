@@ -21,7 +21,7 @@ export function FloatingBackButton() {
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      onClick={() => router.push('/collections')}
+      onClick={() => router.back()}
       data-cursor-label="back"
       className="fixed left-6 top-6 z-[90] flex items-center gap-2 rounded-full glass-strong px-5 py-3 text-xs font-medium uppercase tracking-[0.2em] text-brown shadow-lg dark:text-cream"
     >

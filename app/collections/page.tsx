@@ -1,21 +1,17 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Home, Mail, Info, ShoppingBag } from 'lucide-react';
+import { Home, Mail } from 'lucide-react';
 import { FloatingButton } from '@/components/floating-button';
 
 const COLLECTIONS = [
   { label: 'Stitched', href: '/shop?tab=stitched', image: 'https://images.pexels.com/photos/2065200/pexels-photo-2065200.jpeg?auto=compress&cs=tinysrgb&w=600' },
   { label: 'Unstitched', href: '/shop?tab=unstitched', image: 'https://images.pexels.com/photos/1689731/pexels-photo-1689731.jpeg?auto=compress&cs=tinysrgb&w=600' },
-  { label: 'Signature', href: '/shop?tab=stitched', image: 'https://images.pexels.com/photos/2065200/pexels-photo-2065200.jpeg?auto=compress&cs=tinysrgb&w=600' },
-  { label: 'Accessories', href: '/shop', image: 'https://images.pexels.com/photos/1689731/pexels-photo-1689731.jpeg?auto=compress&cs=tinysrgb&w=600' },
 ];
 
 const NAV_BUTTONS = [
   { label: 'Home', href: '/', icon: <Home className="h-4 w-4" /> },
-  { label: 'About', href: '/about', icon: <Info className="h-4 w-4" /> },
   { label: 'Contact', href: '/contact', icon: <Mail className="h-4 w-4" /> },
-  { label: 'Shop', href: '/shop', icon: <ShoppingBag className="h-4 w-4" /> },
 ];
 
 export default function CollectionsPage() {
@@ -23,7 +19,6 @@ export default function CollectionsPage() {
     <main className="relative z-10 h-screen overflow-hidden">
       {/* Ambient background */}
       <div className="absolute inset-0">
-        {/* Floating golden orbs */}
         {[...Array(5)].map((_, i) => (
           <motion.div
             key={i}
@@ -50,7 +45,6 @@ export default function CollectionsPage() {
           />
         ))}
 
-        {/* Twinkling stars */}
         {[...Array(40)].map((_, i) => (
           <motion.div
             key={`star-${i}`}
@@ -71,7 +65,6 @@ export default function CollectionsPage() {
         ))}
       </div>
 
-      {/* Minimal title */}
       <motion.div
         initial={{ opacity: 0, filter: 'blur(10px)' }}
         animate={{ opacity: 1, filter: 'blur(0px)' }}
@@ -84,7 +77,6 @@ export default function CollectionsPage() {
         </h1>
       </motion.div>
 
-      {/* Floating collection buttons */}
       {COLLECTIONS.map((col, i) => (
         <FloatingButton
           key={col.label}
@@ -97,7 +89,6 @@ export default function CollectionsPage() {
         />
       ))}
 
-      {/* Floating nav buttons */}
       {NAV_BUTTONS.map((nav, i) => (
         <FloatingButton
           key={nav.label}
@@ -111,7 +102,6 @@ export default function CollectionsPage() {
         />
       ))}
 
-      {/* Hint at bottom */}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
