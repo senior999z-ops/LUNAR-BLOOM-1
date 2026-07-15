@@ -1,0 +1,125 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { Home, Mail, Info, ShoppingBag } from 'lucide-react';
+import { FloatingButton } from '@/components/floating-button';
+
+const COLLECTIONS = [
+  { label: 'Stitched', href: '/shop?tab=stitched', image: 'https://images.pexels.com/photos/2065200/pexels-photo-2065200.jpeg?auto=compress&cs=tinysrgb&w=600' },
+  { label: 'Unstitched', href: '/shop?tab=unstitched', image: 'https://images.pexels.com/photos/1689731/pexels-photo-1689731.jpeg?auto=compress&cs=tinysrgb&w=600' },
+  { label: 'Signature', href: '/shop?tab=stitched', image: 'https://images.pexels.com/photos/2065200/pexels-photo-2065200.jpeg?auto=compress&cs=tinysrgb&w=600' },
+  { label: 'Accessories', href: '/shop', image: 'https://images.pexels.com/photos/1689731/pexels-photo-1689731.jpeg?auto=compress&cs=tinysrgb&w=600' },
+];
+
+const NAV_BUTTONS = [
+  { label: 'Home', href: '/', icon: <Home className="h-4 w-4" /> },
+  { label: 'About', href: '/about', icon: <Info className="h-4 w-4" /> },
+  { label: 'Contact', href: '/contact', icon: <Mail className="h-4 w-4" /> },
+  { label: 'Shop', href: '/shop', icon: <ShoppingBag className="h-4 w-4" /> },
+];
+
+export default function CollectionsPage() {
+  return (
+    <main className="relative z-10 h-screen overflow-hidden">
+      {/* Ambient background */}
+      <div className="absolute inset-0">
+        {/* Floating golden orbs */}
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: 200 + i * 80,
+              height: 200 + i * 80,
+              top: `${15 + i * 15}%`,
+              left: `${10 + i * 18}%`,
+              background: 'radial-gradient(circle, hsl(var(--gold) / 0.08), transparent 70%)',
+              filter: 'blur(40px)',
+            }}
+            animate={{
+              x: [0, 50, 0],
+              y: [0, -30, 0],
+              opacity: [0.3, 0.6, 0.3],
+            }}
+            transition={{
+              duration: 10 + i * 2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: i * 0.5,
+            }}
+          />
+        ))}
+
+        {/* Twinkling stars */}
+        {[...Array(40)].map((_, i) => (
+          <motion.div
+            key={`star-${i}`}
+            className="absolute rounded-full bg-gold"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              width: 2,
+              height: 2,
+            }}
+            animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.5, 0.5] }}
+            transition={{
+              duration: Math.random() * 3 + 2,
+              repeat: Infinity,
+              delay: Math.random() * 3,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Minimal title */}
+      <motion.div
+        initial={{ opacity: 0, filter: 'blur(10px)' }}
+        animate={{ opacity: 1, filter: 'blur(0px)' }}
+        transition={{ delay: 0.3, duration: 1 }}
+        className="absolute left-1/2 top-8 z-10 -translate-x-1/2 text-center"
+      >
+        <p className="font-script text-2xl text-gold">discover</p>
+        <h1 className="font-serif text-3xl font-light tracking-[0.1em] text-brown dark:text-cream md:text-4xl">
+          <span className="text-gradient-gold">collections</span>
+        </h1>
+      </motion.div>
+
+      {/* Floating collection buttons */}
+      {COLLECTIONS.map((col, i) => (
+        <FloatingButton
+          key={col.label}
+          href={col.href}
+          label={col.label}
+          image={col.image}
+          variant="collection"
+          index={i}
+          total={COLLECTIONS.length}
+        />
+      ))}
+
+      {/* Floating nav buttons */}
+      {NAV_BUTTONS.map((nav, i) => (
+        <FloatingButton
+          key={nav.label}
+          href={nav.href}
+          label={nav.label}
+          image=""
+          icon={nav.icon}
+          variant="nav"
+          index={i}
+          total={NAV_BUTTONS.length}
+        />
+      ))}
+
+      {/* Hint at bottom */}
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-[10px] uppercase tracking-[0.3em] text-brown/30 dark:text-cream/30"
+      >
+        touch any to explore
+      </motion.p>
+    </main>
+  );
+}
