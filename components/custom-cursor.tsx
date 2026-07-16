@@ -7,6 +7,7 @@ export function CustomCursor() {
   const [hidden, setHidden] = useState(true);
   const [variant, setVariant] = useState<'default' | 'hover' | 'text'>('default');
   const [label, setLabel] = useState('');
+  const [isTouch, setIsTouch] = useState(false);
 
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
@@ -15,6 +16,10 @@ export function CustomCursor() {
 
   const ringX = useSpring(x, { stiffness: 150, damping: 20, mass: 0.8 });
   const ringY = useSpring(y, { stiffness: 150, damping: 20, mass: 0.8 });
+
+  useEffect(() => {
+    setIsTouch(window.matchMedia('(pointer: coarse)').matches);
+  }, []);
 
   useEffect(() => {
     const move = (e: MouseEvent) => {
@@ -44,7 +49,7 @@ export function CustomCursor() {
     };
   }, [x, y]);
 
-  if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
+  if (isTouch) {
     return null;
   }
 
