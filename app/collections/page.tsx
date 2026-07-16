@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { Home, Mail } from 'lucide-react';
 import { FloatingButton } from '@/components/floating-button';
 
@@ -15,10 +16,25 @@ const NAV_BUTTONS = [
 ];
 
 export default function CollectionsPage() {
+  const [stars, setStars] = useState<Array<{ id: number; top: number; left: number; delay: number; duration: number }>>([]);
+
+  useEffect(() => {
+    setStars(
+      Array.from({ length: 40 }, (_, i) => ({
+        id: i,
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        delay: Math.random() * 3,
+        duration: Math.random() * 3 + 2,
+      }))
+    );
+  }, []);
+
   return (
     <main className="relative z-10 h-screen overflow-hidden">
       {/* Ambient background */}
       <div className="absolute inset-0">
+        {/* Floating golden orbs */}
         {[...Array(5)].map((_, i) => (
           <motion.div
             key={i}
@@ -45,26 +61,28 @@ export default function CollectionsPage() {
           />
         ))}
 
-        {[...Array(40)].map((_, i) => (
+        {/* Twinkling stars */}
+        {stars.map((s) => (
           <motion.div
-            key={`star-${i}`}
+            key={`star-${s.id}`}
             className="absolute rounded-full bg-gold"
             style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
+              top: `${s.top}%`,
+              left: `${s.left}%`,
               width: 2,
               height: 2,
             }}
             animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.5, 0.5] }}
             transition={{
-              duration: Math.random() * 3 + 2,
+              duration: s.duration,
               repeat: Infinity,
-              delay: Math.random() * 3,
+              delay: s.delay,
             }}
           />
         ))}
       </div>
 
+      {/* Minimal title */}
       <motion.div
         initial={{ opacity: 0, filter: 'blur(10px)' }}
         animate={{ opacity: 1, filter: 'blur(0px)' }}
@@ -77,6 +95,7 @@ export default function CollectionsPage() {
         </h1>
       </motion.div>
 
+      {/* Floating collection buttons */}
       {COLLECTIONS.map((col, i) => (
         <FloatingButton
           key={col.label}
@@ -89,6 +108,7 @@ export default function CollectionsPage() {
         />
       ))}
 
+      {/* Floating nav buttons */}
       {NAV_BUTTONS.map((nav, i) => (
         <FloatingButton
           key={nav.label}
@@ -102,6 +122,7 @@ export default function CollectionsPage() {
         />
       ))}
 
+      {/* Hint at bottom */}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

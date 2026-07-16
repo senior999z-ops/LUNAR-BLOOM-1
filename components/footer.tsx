@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Instagram, Mail, Twitter, Youtube } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 const FOOTER_LINKS = {
@@ -31,13 +31,19 @@ export function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
-  const stars = Array.from({ length: 30 }, (_, i) => ({
-    id: i,
-    top: Math.random() * 100,
-    left: Math.random() * 100,
-    delay: Math.random() * 3,
-    duration: Math.random() * 3 + 2,
-  }));
+  const [stars, setStars] = useState<Array<{ id: number; top: number; left: number; delay: number; duration: number }>>([]);
+
+  useEffect(() => {
+    setStars(
+      Array.from({ length: 30 }, (_, i) => ({
+        id: i,
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        delay: Math.random() * 3,
+        duration: Math.random() * 3 + 2,
+      }))
+    );
+  }, []);
 
   return (
     <footer className="relative z-10 mt-32 overflow-hidden bg-brown-dark text-cream">

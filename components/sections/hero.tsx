@@ -35,13 +35,20 @@ export function Hero() {
     return () => clearTimeout(t);
   }, []);
 
-  const stars = Array.from({ length: 100 }, (_, i) => ({
-    id: i, top: Math.random() * 100, left: Math.random() * 100,
-    size: Math.random() * 2.5 + 0.5, delay: Math.random() * 5, duration: Math.random() * 4 + 2,
-  }));
+  const [stars, setStars] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
+
+  useEffect(() => {
+    setStars(
+      Array.from({ length: 100 }, (_, i) => ({
+        id: i, top: Math.random() * 100, left: Math.random() * 100,
+        size: Math.random() * 2.5 + 0.5, delay: Math.random() * 5, duration: Math.random() * 4 + 2,
+      }))
+    );
+  }, []);
 
   return (
     <section className="relative flex h-screen items-center justify-center overflow-hidden">
+      {/* Stars */}
       <div className="absolute inset-0">
         {stars.map((s) => (
           <motion.div
@@ -54,6 +61,7 @@ export function Hero() {
         ))}
       </div>
 
+      {/* Moon glow */}
       <motion.div
         style={{ x: sx, y: sy }}
         className="absolute top-[10%] right-[8%] z-[1]"
@@ -73,6 +81,7 @@ export function Hero() {
         </motion.div>
       </motion.div>
 
+      {/* Veil split open */}
       <motion.div
         className="absolute inset-0 z-[15] bg-brown-dark"
         initial={{ clipPath: 'inset(0% 0% 0% 0%)' }}
@@ -86,6 +95,7 @@ export function Hero() {
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
       />
 
+      {/* ONLY: LUNAR BLOOM + TOUCH ME PLEASE button */}
       <div className="relative z-20 flex flex-col items-center px-6 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
@@ -110,6 +120,7 @@ export function Hero() {
             disabled={clicked}
             className="group relative inline-flex items-center justify-center"
           >
+            {/* Pulsing rings */}
             {!clicked && (
               <>
                 <motion.span
@@ -130,6 +141,7 @@ export function Hero() {
               </>
             )}
 
+            {/* Click burst - golden rays */}
             {clicked && (
               <>
                 {[...Array(10)].map((_, i) => (
@@ -151,6 +163,7 @@ export function Hero() {
               </>
             )}
 
+            {/* Button */}
             <motion.span
               animate={{
                 scale: clicked ? [1, 1.15, 0.85] : hovering ? 1.08 : 1,

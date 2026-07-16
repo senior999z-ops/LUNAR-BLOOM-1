@@ -1,24 +1,36 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+
+interface Star { id: number; top: number; left: number; size: number; delay: number; duration: number; }
+interface Petal { id: number; left: number; delay: number; duration: number; size: number; }
 
 export function GlobalBackground() {
-  const stars = Array.from({ length: 60 }, (_, i) => ({
-    id: i,
-    top: Math.random() * 100,
-    left: Math.random() * 100,
-    size: Math.random() * 2 + 1,
-    delay: Math.random() * 3,
-    duration: Math.random() * 3 + 2,
-  }));
+  const [stars, setStars] = useState<Star[]>([]);
+  const [petals, setPetals] = useState<Petal[]>([]);
 
-  const petals = Array.from({ length: 12 }, (_, i) => ({
-    id: i,
-    left: Math.random() * 100,
-    delay: Math.random() * 20,
-    duration: Math.random() * 10 + 15,
-    size: Math.random() * 8 + 6,
-  }));
+  useEffect(() => {
+    setStars(
+      Array.from({ length: 60 }, (_, i) => ({
+        id: i,
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        size: Math.random() * 2 + 1,
+        delay: Math.random() * 3,
+        duration: Math.random() * 3 + 2,
+      }))
+    );
+    setPetals(
+      Array.from({ length: 12 }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 20,
+        duration: Math.random() * 10 + 15,
+        size: Math.random() * 8 + 6,
+      }))
+    );
+  }, []);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
