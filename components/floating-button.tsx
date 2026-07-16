@@ -13,6 +13,7 @@ interface FloatingButtonProps {
   variant?: 'collection' | 'nav';
   index: number;
   total: number;
+  angleOffset?: number;
 }
 
 export function FloatingButton({
@@ -23,6 +24,7 @@ export function FloatingButton({
   variant = 'collection',
   index,
   total,
+  angleOffset = 0,
 }: FloatingButtonProps) {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
@@ -31,8 +33,8 @@ export function FloatingButton({
   const ref = useRef<HTMLDivElement>(null);
 
   // Random starting position
-  const angle = (index / total) * Math.PI * 2;
-  const radius = variant === 'collection' ? 0.32 : 0.42;
+  const angle = (index / total) * Math.PI * 2 + angleOffset;
+  const radius = variant === 'collection' ? 0.3 : 0.46;
 
   const startX = 50 + Math.cos(angle) * radius * 50;
   const startY = 50 + Math.sin(angle) * radius * 50;

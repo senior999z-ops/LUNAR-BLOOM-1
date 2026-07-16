@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { Home, Mail } from 'lucide-react';
+import { Home, Info, Mail } from 'lucide-react';
 import { FloatingButton } from '@/components/floating-button';
 
 const COLLECTIONS = [
@@ -12,6 +12,7 @@ const COLLECTIONS = [
 
 const NAV_BUTTONS = [
   { label: 'Home', href: '/', icon: <Home className="h-4 w-4" /> },
+  { label: 'About', href: '/about', icon: <Info className="h-4 w-4" /> },
   { label: 'Contact', href: '/contact', icon: <Mail className="h-4 w-4" /> },
 ];
 
@@ -119,6 +120,7 @@ export default function CollectionsPage() {
           variant="nav"
           index={i}
           total={NAV_BUTTONS.length}
+          angleOffset={Math.PI / COLLECTIONS.length}
         />
       ))}
 

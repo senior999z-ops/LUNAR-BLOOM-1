@@ -157,6 +157,8 @@ export function Providers({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
   const isHome = pathname === '/';
+  const isCollections = pathname === '/collections';
+  const hideChrome = isHome || isCollections;
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 2600);
@@ -180,13 +182,13 @@ export function Providers({ children }: { children: ReactNode }) {
               {!loading && (
                 <>
                   <CustomCursor />
-                  {!isHome && <AnnouncementBar />}
-                  {!isHome && <Navbar />}
+                  {!hideChrome && <AnnouncementBar />}
+                  {!hideChrome && <Navbar />}
                   {!isHome && <FloatingBackButton key={pathname} />}
                   <PageTransition>{children}</PageTransition>
-                  {!isHome && <Footer />}
+                  {!hideChrome && <Footer />}
                   <CartDrawer />
-                  {!isHome && <BackToTop />}
+                  {!hideChrome && <BackToTop />}
                   <FloatingWhatsApp />
                   <NewsletterPopup />
                 </>
