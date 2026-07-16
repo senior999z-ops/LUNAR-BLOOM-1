@@ -14,7 +14,6 @@ import { Footer } from '@/components/footer';
 import { CartDrawer } from '@/components/cart-drawer';
 import { BackToTop } from '@/components/back-to-top';
 import { FloatingWhatsApp } from '@/components/floating-whatsapp';
-import { NewsletterPopup } from '@/components/newsletter-popup';
 import { FloatingBackButton } from '@/components/floating-back-button';
 import { usePathname } from 'next/navigation';
 
@@ -190,7 +189,6 @@ export function Providers({ children }: { children: ReactNode }) {
                   <CartDrawer />
                   {!hideChrome && <BackToTop />}
                   <FloatingWhatsApp />
-                  <NewsletterPopup />
                 </>
               )}
             </div>
