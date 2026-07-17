@@ -186,8 +186,8 @@ export function FloatingButton({
                 hovered ? 'border-gold' : 'border-gold/20',
               )}
               style={{
-                width: variant === 'collection' ? 180 : 120,
-                height: variant === 'collection' ? 180 : 120,
+                width: variant === 'collection' ? 'clamp(110px, 32vw, 180px)' : 'clamp(80px, 22vw, 120px)',
+                height: variant === 'collection' ? 'clamp(110px, 32vw, 180px)' : 'clamp(80px, 22vw, 120px)',
               }}
             >
               <motion.div
