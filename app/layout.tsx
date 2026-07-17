@@ -1,5 +1,5 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Cormorant_Garamond, Pinyon_Script } from 'next/font/google';
 import { Providers } from '@/components/providers';
 
@@ -10,6 +10,12 @@ const script = Pinyon_Script({ subsets: ['latin'], weight: ['400'], variable: '-
 export const metadata: Metadata = {
   title: 'LUNAR BLOOM — Luxury Pakistani Women Couture by Zaighum Mujahid',
   description: 'Handcrafted shalwar kameez, formal & bridal wear. Made in Lahore, Pakistan. By Zaighum Mujahid.',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

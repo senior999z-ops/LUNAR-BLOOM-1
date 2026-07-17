@@ -9,10 +9,25 @@ interface Petal { id: number; left: number; delay: number; duration: number; siz
 export function GlobalBackground() {
   const [stars, setStars] = useState<Star[]>([]);
   const [petals, setPetals] = useState<Petal[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
+    // Mobile phones can't smoothly animate dozens of blurred/moving
+    // elements at once — this was the main cause of lag on phones.
+    // Fewer elements + lighter effects on small screens, full effect on desktop.
+    const starCount = isMobile ? 14 : 60;
+    const petalCount = isMobile ? 4 : 12;
+
     setStars(
-      Array.from({ length: 60 }, (_, i) => ({
+      Array.from({ length: starCount }, (_, i) => ({
         id: i,
         top: Math.random() * 100,
         left: Math.random() * 100,
@@ -22,7 +37,7 @@ export function GlobalBackground() {
       }))
     );
     setPetals(
-      Array.from({ length: 12 }, (_, i) => ({
+      Array.from({ length: petalCount }, (_, i) => ({
         id: i,
         left: Math.random() * 100,
         delay: Math.random() * 20,
@@ -30,35 +45,55 @@ export function GlobalBackground() {
         size: Math.random() * 8 + 6,
       }))
     );
-  }, []);
+  }, [isMobile]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       {/* Base gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-cream-50 via-cream-100 to-cream-200 dark:from-[hsl(15_32%_8%)] dark:via-[hsl(15_30%_10%)] dark:to-[hsl(15_28%_6%)]" />
 
-      {/* Moonlight glow */}
-      <motion.div
-        className="absolute -top-40 right-0 h-[600px] w-[600px] rounded-full"
-        style={{
-          background:
-            'radial-gradient(circle, hsl(var(--gold) / 0.15), transparent 70%)',
-          filter: 'blur(80px)',
-        }}
-        animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.1, 1] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-      />
+      {/* Moonlight glow — animated on desktop, static (much cheaper) on mobile */}
+      {isMobile ? (
+        <div
+          className="absolute -top-40 right-0 h-[600px] w-[600px] rounded-full opacity-50"
+          style={{
+            background: 'radial-gradient(circle, hsl(var(--gold) / 0.15), transparent 70%)',
+            filter: 'blur(40px)',
+          }}
+        />
+      ) : (
+        <motion.div
+          className="absolute -top-40 right-0 h-[600px] w-[600px] rounded-full"
+          style={{
+            background:
+              'radial-gradient(circle, hsl(var(--gold) / 0.15), transparent 70%)',
+            filter: 'blur(80px)',
+          }}
+          animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.1, 1] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      )}
 
-      <motion.div
-        className="absolute bottom-0 -left-40 h-[500px] w-[500px] rounded-full"
-        style={{
-          background:
-            'radial-gradient(circle, hsl(var(--brown) / 0.12), transparent 70%)',
-          filter: 'blur(80px)',
-        }}
-        animate={{ opacity: [0.3, 0.5, 0.3], scale: [1, 1.15, 1] }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-      />
+      {isMobile ? (
+        <div
+          className="absolute bottom-0 -left-40 h-[500px] w-[500px] rounded-full opacity-40"
+          style={{
+            background: 'radial-gradient(circle, hsl(var(--brown) / 0.12), transparent 70%)',
+            filter: 'blur(40px)',
+          }}
+        />
+      ) : (
+        <motion.div
+          className="absolute bottom-0 -left-40 h-[500px] w-[500px] rounded-full"
+          style={{
+            background:
+              'radial-gradient(circle, hsl(var(--brown) / 0.12), transparent 70%)',
+            filter: 'blur(80px)',
+          }}
+          animate={{ opacity: [0.3, 0.5, 0.3], scale: [1, 1.15, 1] }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      )}
 
       {/* Stars */}
       {stars.map((s) => (
