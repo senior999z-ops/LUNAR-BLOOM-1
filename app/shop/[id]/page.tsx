@@ -1,14 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, Check, Heart, Minus, Plus, ShoppingBag, Star } from 'lucide-react';
-import Link from 'next/link';
+import { Check, Heart, Minus, Plus, ShoppingBag, Star } from 'lucide-react';
 import { notFound, useParams } from 'next/navigation';
 import { useState } from 'react';
 import { useCart, useWishlist } from '@/components/providers';
 import { ProductCard } from '@/components/product-card';
 import { Reveal, TextReveal } from '@/components/reveal';
-import { FloatingBackButton } from '@/components/floating-back-button';
 import { getProduct, products, formatPKR } from '@/lib/products';
 import { cn } from '@/lib/utils';
 
@@ -17,13 +15,16 @@ export default function ProductDetailPage() {
   const id = params.id as string;
   const product = getProduct(id);
 
-  if (!product) return notFound();
-
+  // All hooks must run before any early return — React requires the same
+  // hook order on every render. Calling notFound() above these caused the
+  // hook order to change between renders.
   const { addItem } = useCart();
   const { toggle, has } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [zoom, setZoom] = useState(false);
   const [added, setAdded] = useState(false);
+
+  if (!product) return notFound();
 
   const related = products
     .filter((p) => p.id !== product.id && p.category === product.category)
@@ -44,9 +45,7 @@ export default function ProductDetailPage() {
 
   return (
     <main className="relative z-10 min-h-screen pt-32">
-      <FloatingBackButton />
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        {/* Breadcrumb */}
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           {/* Image with zoom */}
           <Reveal direction="left">
