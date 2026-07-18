@@ -2,7 +2,8 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { Package, Scissors, Search, Shirt } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ProductCard } from '@/components/product-card';
 import { QuickViewModal } from '@/components/quick-view-modal';
 import { FloatingBackButton } from '@/components/floating-back-button';
@@ -19,8 +20,14 @@ const SORTS = [
 
 const CATEGORIES = ['all', 'pret', 'formal', 'bridal', 'accessories'] as const;
 
-export default function ShopPage() {
-  const [tab, setTab] = useState<'stitched' | 'unstitched'>('stitched');
+function ShopPageContent() {
+  // Reads ?tab=stitched / ?tab=unstitched from the URL, e.g. the links
+  // coming from the Collections page. Previously this was ignored and the
+  // page always defaulted to "stitched" no matter which link was clicked.
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get('tab') === 'unstitched' ? 'unstitched' : 'stitched';
+
+  const [tab, setTab] = useState<'stitched' | 'unstitched'>(initialTab);
   const [category, setCategory] = useState<string>('all');
   const [sort, setSort] = useState('featured');
   const [search, setSearch] = useState('');
@@ -176,5 +183,13 @@ export default function ShopPage() {
 
       <QuickViewModal product={quickView} onClose={() => setQuickView(null)} />
     </main>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={null}>
+      <ShopPageContent />
+    </Suspense>
   );
 }

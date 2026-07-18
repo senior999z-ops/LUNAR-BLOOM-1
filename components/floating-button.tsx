@@ -34,7 +34,7 @@ export function FloatingButton({
 
   // Random starting position
   const angle = (index / total) * Math.PI * 2 + angleOffset;
-  const radius = variant === 'collection' ? 0.3 : 0.46;
+  const radius = variant === 'collection' ? 0.42 : 0.44;
 
   const startX = 50 + Math.cos(angle) * radius * 50;
   const startY = 50 + Math.sin(angle) * radius * 50;
@@ -64,8 +64,8 @@ export function FloatingButton({
     const phase = index * 1.3;
     const speedX = variant === 'collection' ? 0.0003 : 0.0004;
     const speedY = variant === 'collection' ? 0.0004 : 0.0003;
-    const ampX = variant === 'collection' ? 60 : 40;
-    const ampY = variant === 'collection' ? 50 : 35;
+    const ampX = variant === 'collection' ? 28 : 20;
+    const ampY = variant === 'collection' ? 24 : 18;
 
     const animate = () => {
       frame++;

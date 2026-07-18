@@ -18,10 +18,22 @@ const NAV_BUTTONS = [
 
 export default function CollectionsPage() {
   const [stars, setStars] = useState<Array<{ id: number; top: number; left: number; delay: number; duration: number }>>([]);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
+    // This page already sits on top of the site-wide GlobalBackground, so
+    // its own star/orb count is kept small on mobile to avoid stacking two
+    // heavy animation layers, which was a big source of the lag here.
     setStars(
-      Array.from({ length: 40 }, (_, i) => ({
+      Array.from({ length: isMobile ? 10 : 40 }, (_, i) => ({
         id: i,
         top: Math.random() * 100,
         left: Math.random() * 100,
@@ -29,38 +41,55 @@ export default function CollectionsPage() {
         duration: Math.random() * 3 + 2,
       }))
     );
-  }, []);
+  }, [isMobile]);
+
+  const orbCount = isMobile ? 2 : 5;
 
   return (
     <main className="relative z-10 h-screen overflow-hidden">
       {/* Ambient background */}
       <div className="absolute inset-0">
-        {/* Floating golden orbs */}
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: 200 + i * 80,
-              height: 200 + i * 80,
-              top: `${15 + i * 15}%`,
-              left: `${10 + i * 18}%`,
-              background: 'radial-gradient(circle, hsl(var(--gold) / 0.08), transparent 70%)',
-              filter: 'blur(40px)',
-            }}
-            animate={{
-              x: [0, 50, 0],
-              y: [0, -30, 0],
-              opacity: [0.3, 0.6, 0.3],
-            }}
-            transition={{
-              duration: 10 + i * 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: i * 0.5,
-            }}
-          />
-        ))}
+        {/* Floating golden orbs — static on mobile, animated on desktop */}
+        {[...Array(orbCount)].map((_, i) =>
+          isMobile ? (
+            <div
+              key={i}
+              className="absolute rounded-full opacity-40"
+              style={{
+                width: 200 + i * 80,
+                height: 200 + i * 80,
+                top: `${15 + i * 15}%`,
+                left: `${10 + i * 18}%`,
+                background: 'radial-gradient(circle, hsl(var(--gold) / 0.08), transparent 70%)',
+                filter: 'blur(24px)',
+              }}
+            />
+          ) : (
+            <motion.div
+              key={i}
+              className="absolute rounded-full"
+              style={{
+                width: 200 + i * 80,
+                height: 200 + i * 80,
+                top: `${15 + i * 15}%`,
+                left: `${10 + i * 18}%`,
+                background: 'radial-gradient(circle, hsl(var(--gold) / 0.08), transparent 70%)',
+                filter: 'blur(40px)',
+              }}
+              animate={{
+                x: [0, 50, 0],
+                y: [0, -30, 0],
+                opacity: [0.3, 0.6, 0.3],
+              }}
+              transition={{
+                duration: 10 + i * 2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: i * 0.5,
+              }}
+            />
+          )
+        )}
 
         {/* Twinkling stars */}
         {stars.map((s) => (
@@ -90,8 +119,8 @@ export default function CollectionsPage() {
         transition={{ delay: 0.3, duration: 1 }}
         className="absolute left-1/2 top-8 z-10 -translate-x-1/2 text-center"
       >
-        <p className="font-script text-2xl text-gold">discover</p>
-        <h1 className="font-serif text-3xl font-light tracking-[0.1em] text-brown dark:text-cream md:text-4xl">
+        <p className="font-script text-3xl text-gold sm:text-4xl">discover</p>
+        <h1 className="font-serif text-5xl font-light tracking-[0.1em] text-brown dark:text-cream sm:text-6xl md:text-7xl">
           <span className="text-gradient-gold">collections</span>
         </h1>
       </motion.div>
