@@ -94,60 +94,63 @@ export function FloatingButton({
 
   if (variant === 'nav') {
     return (
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, scale: 0 }}
-        animate={mounted ? { opacity: 1, scale: 1 } : {}}
-        transition={{ delay: 0.3 + index * 0.1, type: 'spring', stiffness: 200 }}
-        style={{
-          left: `${startX}%`,
-          top: `${startY}%`,
-          x: sx,
-          y: sy,
-        }}
-        className="absolute z-20"
+      // Outer wrapper anchors + centers this button on its (startX, startY)
+      // point. Without the -50% shift, the button was positioned by its
+      // top-left corner, so buttons near the right/bottom edge stuck out
+      // past the screen on mobile (this was the cut-off "CONTACT" bug).
+      <div
+        className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
+        style={{ left: `${startX}%`, top: `${startY}%` }}
       >
-        <motion.div style={{ x: px, y: py, rotate }}>
-          <motion.button
-            onClick={handleClick}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            animate={clicked ? { scale: [1, 1.3, 0] } : { scale: hovered ? 1.15 : 1 }}
-            transition={{ duration: clicked ? 0.6 : 0.3 }}
-            data-cursor-label={label}
-            className="flex items-center gap-2 rounded-full glass-strong px-6 py-3 text-xs font-medium uppercase tracking-[0.2em] text-brown shadow-lg dark:text-cream"
-          >
-            {icon}
-            {label}
-          </motion.button>
-        </motion.div>
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={mounted ? { opacity: 1, scale: 1 } : {}}
+          transition={{ delay: 0.3 + index * 0.1, type: 'spring', stiffness: 200 }}
+          style={{ x: sx, y: sy }}
+        >
+          <motion.div style={{ x: px, y: py, rotate }}>
+            <motion.button
+              onClick={handleClick}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              animate={clicked ? { scale: [1, 1.3, 0] } : { scale: hovered ? 1.15 : 1 }}
+              transition={{ duration: clicked ? 0.6 : 0.3 }}
+              data-cursor-label={label}
+              className="flex items-center gap-2 whitespace-nowrap rounded-full glass-strong px-6 py-3 text-xs font-medium uppercase tracking-[0.2em] text-brown shadow-lg dark:text-cream"
+            >
+              {icon}
+              {label}
+            </motion.button>
+          </motion.div>
 
-        {/* Click ripple */}
-        {clicked && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0.5 }}
-            animate={{ scale: 4, opacity: 0 }}
-            transition={{ duration: 0.6 }}
-            className="absolute inset-0 rounded-full bg-gold"
-          />
-        )}
-      </motion.div>
+          {/* Click ripple */}
+          {clicked && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0.5 }}
+              animate={{ scale: 4, opacity: 0 }}
+              transition={{ duration: 0.6 }}
+              className="absolute inset-0 rounded-full bg-gold"
+            />
+          )}
+        </motion.div>
+      </div>
     );
   }
 
   return (
+    // Outer wrapper anchors + centers this circle on its (startX, startY)
+    // point, so it can't stick out past the screen edge on mobile.
+    <div
+      className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
+      style={{ left: `${startX}%`, top: `${startY}%` }}
+    >
     <motion.div
       ref={ref}
       initial={{ opacity: 0, scale: 0 }}
       animate={mounted ? { opacity: 1, scale: 1 } : {}}
       transition={{ delay: 0.5 + index * 0.15, type: 'spring', stiffness: 150 }}
-      style={{
-        left: `${startX}%`,
-        top: `${startY}%`,
-        x: sx,
-        y: sy,
-      }}
-      className="absolute z-20"
+      style={{ x: sx, y: sy }}
     >
       <motion.div style={{ x: px, y: py, rotate }}>
         <motion.button
@@ -240,5 +243,6 @@ export function FloatingButton({
         </motion.button>
       </motion.div>
     </motion.div>
+    </div>
   );
 }
