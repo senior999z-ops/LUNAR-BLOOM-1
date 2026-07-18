@@ -29,11 +29,10 @@ export default function CollectionsPage() {
   }, []);
 
   useEffect(() => {
-    // This page already sits on top of the site-wide GlobalBackground, so
-    // its own star/orb count is kept small on mobile to avoid stacking two
-    // heavy animation layers, which was a big source of the lag here.
+    // This page sits on top of the site-wide GlobalBackground, so its own
+    // star/orb count stays small on mobile to avoid stacking two heavy layers.
     setStars(
-      Array.from({ length: isMobile ? 10 : 40 }, (_, i) => ({
+      Array.from({ length: isMobile ? 8 : 40 }, (_, i) => ({
         id: i,
         top: Math.random() * 100,
         left: Math.random() * 100,
@@ -102,7 +101,7 @@ export default function CollectionsPage() {
               width: 2,
               height: 2,
             }}
-            animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.5, 0.5] }}
+            animate={{ opacity: [0.1, 0.8, 0.1] }}
             transition={{
               duration: s.duration,
               repeat: Infinity,
@@ -112,16 +111,18 @@ export default function CollectionsPage() {
         ))}
       </div>
 
-      {/* Minimal title */}
+      {/* Title — all capitals */}
       <motion.div
-        initial={{ opacity: 0, filter: 'blur(10px)' }}
-        animate={{ opacity: 1, filter: 'blur(0px)' }}
-        transition={{ delay: 0.3, duration: 1 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.15, duration: 0.6 }}
         className="absolute left-1/2 top-8 z-10 -translate-x-1/2 text-center"
       >
-        <p className="font-script text-3xl text-gold sm:text-4xl">discover</p>
-        <h1 className="font-serif text-5xl font-light tracking-[0.1em] text-brown dark:text-cream sm:text-6xl md:text-7xl">
-          <span className="text-gradient-gold">collections</span>
+        <p className="font-serif text-sm uppercase tracking-[0.45em] text-gold sm:text-base">
+          DISCOVER
+        </p>
+        <h1 className="mt-1 font-serif text-4xl font-light uppercase tracking-[0.15em] text-brown dark:text-cream sm:text-5xl md:text-6xl">
+          <span className="text-gradient-gold">COLLECTIONS</span>
         </h1>
       </motion.div>
 
@@ -138,7 +139,7 @@ export default function CollectionsPage() {
         />
       ))}
 
-      {/* Floating nav buttons */}
+      {/* Floating nav buttons — pushed out to the far edges */}
       {NAV_BUTTONS.map((nav, i) => (
         <FloatingButton
           key={nav.label}
@@ -149,7 +150,7 @@ export default function CollectionsPage() {
           variant="nav"
           index={i}
           total={NAV_BUTTONS.length}
-          angleOffset={Math.PI / COLLECTIONS.length}
+          angleOffset={Math.PI / 2}
         />
       ))}
 
@@ -157,7 +158,7 @@ export default function CollectionsPage() {
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
+        transition={{ delay: 0.8, duration: 0.8 }}
         className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-[10px] uppercase tracking-[0.3em] text-brown/30 dark:text-cream/30"
       >
         touch any to explore

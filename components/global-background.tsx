@@ -20,11 +20,10 @@ export function GlobalBackground() {
   }, []);
 
   useEffect(() => {
-    // Mobile phones can't smoothly animate dozens of blurred/moving
-    // elements at once — this was the main cause of lag on phones.
-    // Fewer elements + lighter effects on small screens, full effect on desktop.
-    const starCount = isMobile ? 14 : 60;
-    const petalCount = isMobile ? 4 : 12;
+    // Mobile phones can't smoothly animate dozens of blurred/moving elements
+    // at once — this was the main cause of lag on phones.
+    const starCount = isMobile ? 10 : 60;
+    const petalCount = isMobile ? 0 : 12;
 
     setStars(
       Array.from({ length: starCount }, (_, i) => ({
@@ -58,7 +57,7 @@ export function GlobalBackground() {
           className="absolute -top-40 right-0 h-[600px] w-[600px] rounded-full opacity-50"
           style={{
             background: 'radial-gradient(circle, hsl(var(--gold) / 0.15), transparent 70%)',
-            filter: 'blur(40px)',
+            filter: 'blur(30px)',
           }}
         />
       ) : (
@@ -79,7 +78,7 @@ export function GlobalBackground() {
           className="absolute bottom-0 -left-40 h-[500px] w-[500px] rounded-full opacity-40"
           style={{
             background: 'radial-gradient(circle, hsl(var(--brown) / 0.12), transparent 70%)',
-            filter: 'blur(40px)',
+            filter: 'blur(30px)',
           }}
         />
       ) : (
@@ -106,7 +105,7 @@ export function GlobalBackground() {
             width: s.size,
             height: s.size,
           }}
-          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          animate={{ opacity: [0.1, 0.8, 0.1] }}
           transition={{
             duration: s.duration,
             repeat: Infinity,
@@ -116,7 +115,7 @@ export function GlobalBackground() {
         />
       ))}
 
-      {/* Floating petals */}
+      {/* Floating petals — desktop only */}
       {petals.map((p) => (
         <div
           key={p.id}
