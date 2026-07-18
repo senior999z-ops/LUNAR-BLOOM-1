@@ -10,8 +10,8 @@ const FOOTER_LINKS = {
   Shop: [
     { href: '/shop', label: 'All Products' },
     { href: '/collections', label: 'Collections' },
-    { href: '/shop?category=pret', label: 'Pret' },
-    { href: '/shop?category=bridal', label: 'Bridal' },
+    { href: '/shop?tab=stitched', label: 'Stitched' },
+    { href: '/shop?tab=unstitched', label: 'Unstitched' },
   ],
   Brand: [
     { href: '/about', label: 'Our Story' },
@@ -34,8 +34,9 @@ export function Footer() {
   const [stars, setStars] = useState<Array<{ id: number; top: number; left: number; delay: number; duration: number }>>([]);
 
   useEffect(() => {
+    const count = window.matchMedia('(max-width: 1023px)').matches ? 8 : 30;
     setStars(
-      Array.from({ length: 30 }, (_, i) => ({
+      Array.from({ length: count }, (_, i) => ({
         id: i,
         top: Math.random() * 100,
         left: Math.random() * 100,
@@ -49,7 +50,7 @@ export function Footer() {
     <footer className="relative z-10 mt-32 overflow-hidden bg-brown-dark text-cream">
       {/* Animated moon */}
       <motion.div
-        className="absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full"
+        className="absolute -top-32 left-1/2 hidden h-64 w-64 -translate-x-1/2 rounded-full lg:block"
         style={{
           background:
             'radial-gradient(circle, hsl(var(--gold) / 0.2), transparent 70%)',
@@ -65,7 +66,7 @@ export function Footer() {
           key={s.id}
           className="absolute rounded-full bg-gold"
           style={{ top: `${s.top}%`, left: `${s.left}%`, width: 2, height: 2 }}
-          animate={{ opacity: [0.1, 0.9, 0.1], scale: [0.5, 1.5, 0.5] }}
+          animate={{ opacity: [0.1, 0.9, 0.1] }}
           transition={{ duration: s.duration, repeat: Infinity, delay: s.delay }}
         />
       ))}
@@ -118,7 +119,7 @@ export function Footer() {
               By Zaighum Mujahid
             </p>
             <p className="mt-4 max-w-xs text-sm text-cream/50">
-              Luxury Pakistani women's couture. Handcrafted in Lahore with heritage embroidery and pure fabrics.
+              Luxury Pakistani women&apos;s couture. Handcrafted in Lahore with heritage embroidery and pure fabrics.
             </p>
           </div>
 

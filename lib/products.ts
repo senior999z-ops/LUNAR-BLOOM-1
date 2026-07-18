@@ -4,7 +4,7 @@ export interface Product {
   tagline: string;
   description: string;
   price: number;
-  category: 'pret' | 'formal' | 'bridal' | 'accessories';
+  category: 'pret' | 'formal' | 'accessories';
   type: 'stitched' | 'unstitched';
   image: string;
   rating: number;
@@ -52,24 +52,6 @@ export const products: Product[] = [
     size: 'XS — XL',
   },
   {
-    id: 'shahi-bridal',
-    name: 'Shahi Bridal',
-    tagline: 'Heirloom Bridal Lehenga',
-    description:
-      'A majestic red and gold lehenga with zardozi embroidery, dabka, and sequin work. Each motif is hand-stitched by artisans in Karachi, carrying centuries of bridal tradition.',
-    price: 185000,
-    category: 'bridal',
-    type: 'stitched',
-    image:
-      'https://images.pexels.com/photos/2065200/pexels-photo-2065200.jpeg?auto=compress&cs=tinysrgb&w=800',
-    rating: 5.0,
-    reviews: 421,
-    badge: 'Limited',
-    notes: ['Zardozi', 'Dabka', 'Sequin Work'],
-    fabric: 'Raw Silk Lehenga, Net Dupatta, Choli',
-    size: 'Made to Measure',
-  },
-  {
     id: 'gulab-pret',
     name: 'Gulab Pret',
     tagline: 'Lawn Summer Suit',
@@ -91,7 +73,7 @@ export const products: Product[] = [
     name: 'Mahool Formal',
     tagline: 'Velvet Winter Formal',
     description:
-      'A rich velvet formal in midnight blue with silver tilla embroidery. Designed for winter weddings in Islamabad, where the air is crisp and the celebrations warm.',
+      'A rich velvet formal in midnight blue with silver tilla embroidery. Designed for winter celebrations in Islamabad, where the air is crisp and the evenings warm.',
     price: 42500,
     category: 'formal',
     type: 'stitched',
@@ -120,24 +102,6 @@ export const products: Product[] = [
     notes: ['Cotton', 'Chikankari', 'Thread Work'],
     fabric: 'Cotton Kameez, Cotton Dupatta, Cotton Trouser',
     size: 'XS — XXL',
-  },
-  {
-    id: 'zardozi-bridal',
-    name: 'Zardozi Bridal',
-    tagline: 'Gold Work Bridal Sharara',
-    description:
-      'A magnificent gold zardozi sharara in deep maroon, with a heavily embellished kameez and a flowing gharara. A tribute to the royal weddings of the subcontinent.',
-    price: 215000,
-    category: 'bridal',
-    type: 'stitched',
-    image:
-      'https://images.pexels.com/photos/2065200/pexels-photo-2065200.jpeg?auto=compress&cs=tinysrgb&w=800',
-    rating: 5.0,
-    reviews: 234,
-    badge: 'New',
-    notes: ['Zardozi', 'Gold Work', 'Gharara'],
-    fabric: 'Raw Silk, Net Dupatta, Sharara',
-    size: 'Made to Measure',
   },
   {
     id: 'motia-accessories',
@@ -189,23 +153,6 @@ export const products: Product[] = [
     notes: ['Cotton Lawn', 'Block Print', 'Handmade'],
     fabric: 'Cotton Lawn, Cotton Dupatta, Cotton Trouser',
     size: 'XS — XXL',
-  },
-  {
-    id: 'noor-bridal',
-    name: 'Noor Bridal',
-    tagline: 'Pearl Work Bridal Gown',
-    description:
-      'An ivory bridal gown adorned with pearl and crystal work, a modern silhouette with traditional craftsmanship. For the bride who carries both worlds within her.',
-    price: 165000,
-    category: 'bridal',
-    type: 'stitched',
-    image:
-      'https://images.pexels.com/photos/2065200/pexels-photo-2065200.jpeg?auto=compress&cs=tinysrgb&w=800',
-    rating: 4.9,
-    reviews: 167,
-    notes: ['Pearl Work', 'Crystal', 'Gown'],
-    fabric: 'Raw Silk, Net Dupatta, Gown',
-    size: 'Made to Measure',
   },
   {
     id: 'kashmir-shawl',
@@ -344,18 +291,18 @@ export const collections = [
   {
     id: 'formal-edit',
     name: 'Formal Edit',
-    description: 'For weddings, mehndis, and celebrations that deserve more.',
+    description: 'For gatherings and celebrations that deserve more.',
     image:
       'https://images.pexels.com/photos/1689731/pexels-photo-1689731.jpeg?auto=compress&cs=tinysrgb&w=1200',
     productIds: ['shahtoot-formal', 'mahool-formal', 'shalimar-formal'],
   },
   {
-    id: 'bridal-atelier',
-    name: 'Bridal Atelier',
-    description: 'Heirloom pieces for the most important day of your life.',
+    id: 'unstitched-edit',
+    name: 'Unstitched Edit',
+    description: 'Choose your own silhouette — tailored to your measurements.',
     image:
-      'https://images.pexels.com/photos/2065200/pexels-photo-2065200.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    productIds: ['shahi-bridal', 'zardozi-bridal', 'noor-bridal'],
+      'https://images.pexels.com/photos/1689731/pexels-photo-1689731.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    productIds: ['gulnar-unstitched', 'yasmine-unstitched', 'rani-unstitched', 'mehfil-unstitched'],
   },
   {
     id: 'accessories',
