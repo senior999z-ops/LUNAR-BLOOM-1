@@ -153,14 +153,22 @@ function PageTransition({ children }: { children: ReactNode }) {
 }
 
 export function Providers({ children }: { children: ReactNode }) {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === '/';
   const isCollections = pathname === '/collections';
   const hideChrome = isHome || isCollections;
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 2600);
+    // Full-screen loader now shows only once per browser session (not on
+    // every page navigation, and not on every fresh visit) — this is what
+    // was making /shop and other pages feel "empty" for a couple seconds.
+    if (sessionStorage.getItem('lb_loaded')) return;
+    setLoading(true);
+    const t = setTimeout(() => {
+      setLoading(false);
+      sessionStorage.setItem('lb_loaded', '1');
+    }, 900);
     return () => clearTimeout(t);
   }, []);
 
@@ -178,19 +186,15 @@ export function Providers({ children }: { children: ReactNode }) {
               <GlobalBackground />
               {!isHome && <ScrollProgress />}
               <AnimatePresence>{loading && <Loader key="loader" />}</AnimatePresence>
-              {!loading && (
-                <>
-                  <CustomCursor />
-                  {!hideChrome && <AnnouncementBar />}
-                  {!hideChrome && <Navbar />}
-                  {!isHome && <FloatingBackButton key={pathname} />}
-                  <PageTransition>{children}</PageTransition>
-                  {!hideChrome && <Footer />}
-                  <CartDrawer />
-                  {!hideChrome && <BackToTop />}
-                  <FloatingWhatsApp />
-                </>
-              )}
+              <CustomCursor />
+              {!hideChrome && <AnnouncementBar />}
+              {!hideChrome && <Navbar />}
+              {!isHome && <FloatingBackButton key={pathname} />}
+              <PageTransition>{children}</PageTransition>
+              {!hideChrome && <Footer />}
+              <CartDrawer />
+              {!hideChrome && <BackToTop />}
+              <FloatingWhatsApp />
             </div>
           </WishlistProvider>
         </CartProvider>
