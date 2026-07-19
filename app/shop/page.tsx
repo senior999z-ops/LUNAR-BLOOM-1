@@ -19,8 +19,6 @@ const SORTS = [
 
 const CATEGORIES = ['all', 'pret', 'formal', 'accessories'] as const;
 
-// Shown instantly while the client-side code loads, so the page is never
-// blank — this was the "khali page" on slower mobile connections.
 function ShopSkeleton() {
   return (
     <main className="relative z-10 min-h-screen pt-32">
@@ -51,8 +49,6 @@ function ShopSkeleton() {
 }
 
 function ShopPageContent() {
-  // Reads ?tab=stitched / ?tab=unstitched from the URL, e.g. the links
-  // coming from the Collections page.
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') === 'unstitched' ? 'unstitched' : 'stitched';
 
@@ -91,7 +87,6 @@ function ShopPageContent() {
   return (
     <main className="relative z-10 min-h-screen pt-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        {/* Header */}
         <div className="mb-12 text-center">
           <Reveal direction="blur">
             <p className="font-script text-2xl text-gold">The Collection</p>
@@ -107,7 +102,6 @@ function ShopPageContent() {
           </Reveal>
         </div>
 
-        {/* Stitched / Unstitched Tabs */}
         <div className="mb-10 flex justify-center">
           <div className="relative flex rounded-full border border-brown/15 p-1 dark:border-cream/15">
             {(['stitched', 'unstitched'] as const).map((t) => (
@@ -135,7 +129,6 @@ function ShopPageContent() {
           </div>
         </div>
 
-        {/* Category + Search + Sort */}
         <div className="mb-12 flex flex-col items-center justify-between gap-6 md:flex-row">
           <div className="flex flex-wrap items-center justify-center gap-2">
             {CATEGORIES.map((cat) => (
@@ -178,7 +171,6 @@ function ShopPageContent() {
           </div>
         </div>
 
-        {/* Products grid with AnimatePresence for tab switch */}
         <AnimatePresence mode="wait">
           <motion.div
             key={tab + category}
