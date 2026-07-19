@@ -135,20 +135,22 @@ function WishlistProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// No AnimatePresence/mode="wait" here anymore — that setup could get stuck
+// waiting for an "exit" animation that never resolved during a client-side
+// route change, which is what was leaving the screen blank until a hard
+// refresh. This version fades the new page in but never blocks it from
+// mounting.
 function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={pathname}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      key={pathname}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
   );
 }
 
@@ -160,9 +162,6 @@ export function Providers({ children }: { children: ReactNode }) {
   const hideChrome = isHome || isCollections;
 
   useEffect(() => {
-    // Full-screen loader now shows only once per browser session (not on
-    // every page navigation, and not on every fresh visit) — this is what
-    // was making /shop and other pages feel "empty" for a couple seconds.
     if (sessionStorage.getItem('lb_loaded')) return;
     setLoading(true);
     const t = setTimeout(() => {
