@@ -2,13 +2,17 @@
 
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useTheme } from 'next-themes';
+import { Moon, Sun } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export function Hero() {
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
   const [revealed, setRevealed] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [clicked, setClicked] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const handleEnter = () => {
     if (clicked) return;
@@ -22,6 +26,7 @@ export function Hero() {
   const sy = useSpring(my, { stiffness: 50, damping: 20 });
 
   useEffect(() => {
+    setMounted(true);
     const handleMove = (e: MouseEvent) => {
       mx.set((e.clientX / window.innerWidth - 0.5) * 30);
       my.set((e.clientY / window.innerHeight - 0.5) * 30);
@@ -35,28 +40,84 @@ export function Hero() {
     return () => clearTimeout(t);
   }, []);
 
-  const [stars, setStars] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
+  // Two depth layers of stars — the far layer is smaller/dimmer and drifts
+  // slower, the near layer twinkles brighter — this is what gives the
+  // "galaxy with depth" look instead of one flat sheet of dots.
+  const [farStars, setFarStars] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
+  const [nearStars, setNearStars] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
+  const [shootingStars, setShootingStars] = useState<Array<{ id: number; top: number; left: number; delay: number }>>([]);
 
   useEffect(() => {
-    setStars(
-      Array.from({ length: 100 }, (_, i) => ({
+    const mobile = window.matchMedia('(max-width: 767px)').matches;
+    setFarStars(
+      Array.from({ length: mobile ? 40 : 90 }, (_, i) => ({
         id: i, top: Math.random() * 100, left: Math.random() * 100,
-        size: Math.random() * 2.5 + 0.5, delay: Math.random() * 5, duration: Math.random() * 4 + 2,
+        size: Math.random() * 1.2 + 0.4, delay: Math.random() * 5, duration: Math.random() * 4 + 3,
+      }))
+    );
+    setNearStars(
+      Array.from({ length: mobile ? 20 : 45 }, (_, i) => ({
+        id: i, top: Math.random() * 100, left: Math.random() * 100,
+        size: Math.random() * 2.5 + 1.2, delay: Math.random() * 5, duration: Math.random() * 3 + 2,
+      }))
+    );
+    setShootingStars(
+      Array.from({ length: mobile ? 2 : 4 }, (_, i) => ({
+        id: i, top: Math.random() * 40, left: Math.random() * 60,
+        delay: i * 4 + Math.random() * 3,
       }))
     );
   }, []);
 
   return (
-    <section className="relative flex h-screen items-center justify-center overflow-hidden">
-      {/* Stars */}
+    <section className="relative flex h-screen items-center justify-center overflow-hidden bg-brown-dark">
+      {/* Galaxy nebula swirl */}
+      <motion.div
+        className="absolute inset-0 opacity-70"
+        style={{
+          background:
+            'radial-gradient(ellipse 80% 60% at 30% 20%, hsl(280 40% 30% / 0.35), transparent 60%), radial-gradient(ellipse 70% 50% at 75% 70%, hsl(45 65% 35% / 0.3), transparent 60%), radial-gradient(ellipse 60% 60% at 50% 100%, hsl(15 40% 20% / 0.5), transparent 70%)',
+        }}
+        animate={{ opacity: [0.6, 0.85, 0.6] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      {/* Far star layer */}
       <div className="absolute inset-0">
-        {stars.map((s) => (
+        {farStars.map((s) => (
           <motion.div
-            key={s.id}
+            key={`far-${s.id}`}
+            className="absolute rounded-full bg-cream-50"
+            style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size }}
+            animate={{ opacity: [0.05, 0.5, 0.05] }}
+            transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
+          />
+        ))}
+      </div>
+
+      {/* Near star layer — brighter, gold twinkle */}
+      <div className="absolute inset-0">
+        {nearStars.map((s) => (
+          <motion.div
+            key={`near-${s.id}`}
             className="absolute rounded-full bg-gold"
             style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size }}
-            animate={{ opacity: [0.1, 0.9, 0.1], scale: [0.5, 1.8, 0.5] }}
+            animate={{ opacity: [0.15, 0.95, 0.15], scale: [0.6, 1.8, 0.6] }}
             transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
+          />
+        ))}
+      </div>
+
+      {/* Shooting stars — desktop only, subtle */}
+      <div className="absolute inset-0 hidden lg:block">
+        {shootingStars.map((s) => (
+          <motion.div
+            key={`shoot-${s.id}`}
+            className="absolute h-px w-24 bg-gradient-to-r from-transparent via-cream-50 to-transparent"
+            style={{ top: `${s.top}%`, left: `${s.left}%`, rotate: '25deg' }}
+            initial={{ opacity: 0, x: -60 }}
+            animate={{ opacity: [0, 1, 0], x: [0, 260] }}
+            transition={{ duration: 1.4, repeat: Infinity, repeatDelay: 6, delay: s.delay, ease: 'easeOut' }}
           />
         ))}
       </div>
@@ -67,10 +128,10 @@ export function Hero() {
         className="absolute top-[10%] right-[8%] z-[1]"
       >
         <motion.div
-          className="h-72 w-72 rounded-full md:h-96 md:w-96"
+          className="relative h-72 w-72 rounded-full md:h-96 md:w-96"
           style={{
             background: 'radial-gradient(circle at 35% 35%, hsl(var(--cream-50)), hsl(var(--gold) / 0.3) 50%, hsl(var(--brown) / 0.4))',
-            boxShadow: '0 0 120px hsl(var(--gold) / 0.4), inset -30px -30px 80px hsl(var(--brown) / 0.35)',
+            boxShadow: '0 0 140px hsl(var(--gold) / 0.45), 0 0 60px hsl(var(--gold) / 0.3), inset -30px -30px 80px hsl(var(--brown) / 0.35)',
           }}
           animate={{ scale: [1, 1.03, 1] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
@@ -78,8 +139,30 @@ export function Hero() {
           <div className="absolute left-[20%] top-[30%] h-8 w-8 rounded-full bg-brown/10" />
           <div className="absolute left-[55%] top-[50%] h-12 w-12 rounded-full bg-brown/10" />
           <div className="absolute left-[35%] top-[65%] h-6 w-6 rounded-full bg-brown/10" />
+
+          {/* Soft outer halo ring */}
+          <motion.div
+            className="absolute -inset-6 rounded-full border border-gold/10"
+            animate={{ scale: [1, 1.08, 1], opacity: [0.4, 0.7, 0.4] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          />
         </motion.div>
       </motion.div>
+
+      {/* Light / Dark toggle — Navbar is hidden on this page, so it lives here */}
+      {mounted && (
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 3, duration: 0.8 }}
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          data-cursor-label="theme"
+          className="fixed right-6 top-6 z-30 flex h-11 w-11 items-center justify-center rounded-full glass-strong text-gold"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </motion.button>
+      )}
 
       {/* Veil split open */}
       <motion.div
@@ -101,7 +184,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={revealed ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 1.5, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="font-serif text-5xl font-light leading-none tracking-[0.05em] text-brown dark:text-cream md:text-[7rem] lg:text-[9rem]"
+          className="font-serif text-5xl font-light leading-none tracking-[0.05em] text-cream md:text-[7rem] lg:text-[9rem]"
         >
           <span className="text-gradient-gold">LUNAR BLOOM</span>
         </motion.h1>
@@ -181,7 +264,7 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={revealed ? { opacity: 1 } : {}}
           transition={{ delay: 2.8, duration: 1 }}
-          className="mt-8 text-[10px] uppercase tracking-[0.4em] text-brown/40 dark:text-cream/40"
+          className="mt-8 text-[10px] uppercase tracking-[0.4em] text-cream/50"
         >
           by zaighum mujahid
         </motion.p>
