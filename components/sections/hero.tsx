@@ -13,6 +13,7 @@ export function Hero() {
   const [hovering, setHovering] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const isDark = mounted ? theme === 'dark' : true;
 
   const handleEnter = () => {
     if (clicked) return;
@@ -40,12 +41,10 @@ export function Hero() {
     return () => clearTimeout(t);
   }, []);
 
-  // Two depth layers of stars — the far layer is smaller/dimmer and drifts
-  // slower, the near layer twinkles brighter — this is what gives the
-  // "galaxy with depth" look instead of one flat sheet of dots.
   const [farStars, setFarStars] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
   const [nearStars, setNearStars] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
   const [shootingStars, setShootingStars] = useState<Array<{ id: number; top: number; left: number; delay: number }>>([]);
+  const [clouds, setClouds] = useState<Array<{ id: number; top: number; left: number; scale: number; duration: number }>>([]);
 
   useEffect(() => {
     const mobile = window.matchMedia('(max-width: 767px)').matches;
@@ -67,112 +66,163 @@ export function Hero() {
         delay: i * 4 + Math.random() * 3,
       }))
     );
+    setClouds(
+      Array.from({ length: mobile ? 3 : 5 }, (_, i) => ({
+        id: i, top: 10 + Math.random() * 50, left: Math.random() * 100,
+        scale: Math.random() * 0.6 + 0.7, duration: Math.random() * 40 + 60,
+      }))
+    );
   }, []);
 
   return (
-    <section className="relative flex h-screen items-center justify-center overflow-hidden bg-brown-dark">
-      {/* Galaxy nebula swirl */}
-      <motion.div
-        className="absolute inset-0 opacity-70"
-        style={{
-          background:
-            'radial-gradient(ellipse 80% 60% at 30% 20%, hsl(280 40% 30% / 0.35), transparent 60%), radial-gradient(ellipse 70% 50% at 75% 70%, hsl(45 65% 35% / 0.3), transparent 60%), radial-gradient(ellipse 60% 60% at 50% 100%, hsl(15 40% 20% / 0.5), transparent 70%)',
-        }}
-        animate={{ opacity: [0.6, 0.85, 0.6] }}
-        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-      />
+    <section
+      className="relative flex h-screen items-center justify-center overflow-hidden transition-colors duration-700"
+      style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
+    >
+      {/* NIGHT: galaxy nebula swirl */}
+      {isDark && (
+        <motion.div
+          className="absolute inset-0 opacity-70"
+          style={{
+            background:
+              'radial-gradient(ellipse 80% 60% at 30% 20%, hsl(280 40% 30% / 0.35), transparent 60%), radial-gradient(ellipse 70% 50% at 75% 70%, hsl(45 65% 35% / 0.3), transparent 60%), radial-gradient(ellipse 60% 60% at 50% 100%, hsl(15 40% 20% / 0.5), transparent 70%)',
+          }}
+          animate={{ opacity: [0.6, 0.85, 0.6] }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      )}
 
-      {/* Far star layer */}
-      <div className="absolute inset-0">
-        {farStars.map((s) => (
-          <motion.div
-            key={`far-${s.id}`}
-            className="absolute rounded-full bg-cream-50"
-            style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size }}
-            animate={{ opacity: [0.05, 0.5, 0.05] }}
-            transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
+      {/* DAY: soft sky gradient + drifting clouds */}
+      {!isDark && (
+        <>
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(180deg, hsl(45 70% 88%), hsl(30 60% 90%) 60%, hsl(30 47% 90%))',
+            }}
           />
-        ))}
-      </div>
+          {clouds.map((c) => (
+            <motion.div
+              key={c.id}
+              className="absolute rounded-full opacity-60"
+              style={{
+                top: `${c.top}%`,
+                width: 160 * c.scale,
+                height: 50 * c.scale,
+                background: 'radial-gradient(ellipse, hsl(var(--cream-50) / 0.9), transparent 70%)',
+                filter: 'blur(8px)',
+              }}
+              initial={{ left: `${c.left}%` }}
+              animate={{ left: ['-20%', '120%'] }}
+              transition={{ duration: c.duration, repeat: Infinity, ease: 'linear' }}
+            />
+          ))}
+        </>
+      )}
 
-      {/* Near star layer — brighter, gold twinkle */}
-      <div className="absolute inset-0">
-        {nearStars.map((s) => (
-          <motion.div
-            key={`near-${s.id}`}
-            className="absolute rounded-full bg-gold"
-            style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size }}
-            animate={{ opacity: [0.15, 0.95, 0.15], scale: [0.6, 1.8, 0.6] }}
-            transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
-          />
-        ))}
-      </div>
+      {/* NIGHT: star layers */}
+      {isDark && (
+        <>
+          <div className="absolute inset-0">
+            {farStars.map((s) => (
+              <motion.div
+                key={`far-${s.id}`}
+                className="absolute rounded-full bg-cream-50"
+                style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size }}
+                animate={{ opacity: [0.05, 0.5, 0.05] }}
+                transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
+              />
+            ))}
+          </div>
+          <div className="absolute inset-0">
+            {nearStars.map((s) => (
+              <motion.div
+                key={`near-${s.id}`}
+                className="absolute rounded-full bg-gold"
+                style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size }}
+                animate={{ opacity: [0.15, 0.95, 0.15], scale: [0.6, 1.8, 0.6] }}
+                transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
+              />
+            ))}
+          </div>
+          <div className="absolute inset-0 hidden lg:block">
+            {shootingStars.map((s) => (
+              <motion.div
+                key={`shoot-${s.id}`}
+                className="absolute h-px w-24 bg-gradient-to-r from-transparent via-cream-50 to-transparent"
+                style={{ top: `${s.top}%`, left: `${s.left}%`, rotate: '25deg' }}
+                initial={{ opacity: 0, x: -60 }}
+                animate={{ opacity: [0, 1, 0], x: [0, 260] }}
+                transition={{ duration: 1.4, repeat: Infinity, repeatDelay: 6, delay: s.delay, ease: 'easeOut' }}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
-      {/* Shooting stars — desktop only, subtle */}
-      <div className="absolute inset-0 hidden lg:block">
-        {shootingStars.map((s) => (
-          <motion.div
-            key={`shoot-${s.id}`}
-            className="absolute h-px w-24 bg-gradient-to-r from-transparent via-cream-50 to-transparent"
-            style={{ top: `${s.top}%`, left: `${s.left}%`, rotate: '25deg' }}
-            initial={{ opacity: 0, x: -60 }}
-            animate={{ opacity: [0, 1, 0], x: [0, 260] }}
-            transition={{ duration: 1.4, repeat: Infinity, repeatDelay: 6, delay: s.delay, ease: 'easeOut' }}
-          />
-        ))}
-      </div>
-
-      {/* Moon glow */}
+      {/* Moon (night) / Sun (day) */}
       <motion.div
         style={{ x: sx, y: sy }}
         className="absolute top-[10%] right-[8%] z-[1]"
       >
-        <motion.div
-          className="relative h-72 w-72 rounded-full md:h-96 md:w-96"
-          style={{
-            background: 'radial-gradient(circle at 35% 35%, hsl(var(--cream-50)), hsl(var(--gold) / 0.3) 50%, hsl(var(--brown) / 0.4))',
-            boxShadow: '0 0 140px hsl(var(--gold) / 0.45), 0 0 60px hsl(var(--gold) / 0.3), inset -30px -30px 80px hsl(var(--brown) / 0.35)',
-          }}
-          animate={{ scale: [1, 1.03, 1] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <div className="absolute left-[20%] top-[30%] h-8 w-8 rounded-full bg-brown/10" />
-          <div className="absolute left-[55%] top-[50%] h-12 w-12 rounded-full bg-brown/10" />
-          <div className="absolute left-[35%] top-[65%] h-6 w-6 rounded-full bg-brown/10" />
-
-          {/* Soft outer halo ring */}
+        {isDark ? (
           <motion.div
-            className="absolute -inset-6 rounded-full border border-gold/10"
-            animate={{ scale: [1, 1.08, 1], opacity: [0.4, 0.7, 0.4] }}
+            className="relative h-72 w-72 rounded-full md:h-96 md:w-96"
+            style={{
+              background: 'radial-gradient(circle at 35% 35%, hsl(var(--cream-50)), hsl(var(--gold) / 0.3) 50%, hsl(var(--brown) / 0.4))',
+              boxShadow: '0 0 140px hsl(var(--gold) / 0.45), 0 0 60px hsl(var(--gold) / 0.3), inset -30px -30px 80px hsl(var(--brown) / 0.35)',
+            }}
+            animate={{ scale: [1, 1.03, 1] }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <div className="absolute left-[20%] top-[30%] h-8 w-8 rounded-full bg-brown/10" />
+            <div className="absolute left-[55%] top-[50%] h-12 w-12 rounded-full bg-brown/10" />
+            <div className="absolute left-[35%] top-[65%] h-6 w-6 rounded-full bg-brown/10" />
+            <motion.div
+              className="absolute -inset-6 rounded-full border border-gold/10"
+              animate={{ scale: [1, 1.08, 1], opacity: [0.4, 0.7, 0.4] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            className="h-56 w-56 rounded-full md:h-72 md:w-72"
+            style={{
+              background: 'radial-gradient(circle at 35% 35%, hsl(45 90% 90%), hsl(45 85% 65%) 55%, hsl(35 75% 55%))',
+              boxShadow: '0 0 100px hsl(45 85% 65% / 0.6), 0 0 200px hsl(45 85% 65% / 0.3)',
+            }}
+            animate={{ scale: [1, 1.04, 1] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           />
-        </motion.div>
+        )}
       </motion.div>
 
-      {/* Light / Dark toggle — Navbar is hidden on this page, so it lives here */}
+      {/* Light / Dark toggle */}
       {mounted && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 3, duration: 0.8 }}
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          onClick={() => setTheme(isDark ? 'light' : 'dark')}
           data-cursor-label="theme"
           className="fixed right-6 top-6 z-30 flex h-11 w-11 items-center justify-center rounded-full glass-strong text-gold"
           aria-label="Toggle theme"
         >
-          {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </motion.button>
       )}
 
       {/* Veil split open */}
       <motion.div
-        className="absolute inset-0 z-[15] bg-brown-dark"
+        className="absolute inset-0 z-[15]"
+        style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
         initial={{ clipPath: 'inset(0% 0% 0% 0%)' }}
         animate={revealed ? { clipPath: 'inset(0% 0% 50% 0%)' } : {}}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
       />
       <motion.div
-        className="absolute inset-0 z-[15] bg-brown-dark"
+        className="absolute inset-0 z-[15]"
+        style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
         initial={{ clipPath: 'inset(0% 0% 0% 0%)' }}
         animate={revealed ? { clipPath: 'inset(50% 0% 0% 0%)' } : {}}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
@@ -184,7 +234,8 @@ export function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={revealed ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 1.5, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="font-serif text-5xl font-light leading-none tracking-[0.05em] text-cream md:text-[7rem] lg:text-[9rem]"
+          className="font-serif text-5xl font-light leading-none tracking-[0.05em] md:text-[7rem] lg:text-[9rem]"
+          style={{ color: isDark ? 'hsl(var(--cream))' : 'hsl(var(--brown-dark))' }}
         >
           <span className="text-gradient-gold">LUNAR BLOOM</span>
         </motion.h1>
@@ -203,7 +254,6 @@ export function Hero() {
             disabled={clicked}
             className="group relative inline-flex items-center justify-center"
           >
-            {/* Pulsing rings */}
             {!clicked && (
               <>
                 <motion.span
@@ -224,7 +274,6 @@ export function Hero() {
               </>
             )}
 
-            {/* Click burst - golden rays */}
             {clicked && (
               <>
                 {[...Array(10)].map((_, i) => (
@@ -246,7 +295,6 @@ export function Hero() {
               </>
             )}
 
-            {/* Button */}
             <motion.span
               animate={{
                 scale: clicked ? [1, 1.15, 0.85] : hovering ? 1.08 : 1,
@@ -264,7 +312,8 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={revealed ? { opacity: 1 } : {}}
           transition={{ delay: 2.8, duration: 1 }}
-          className="mt-8 text-[10px] uppercase tracking-[0.4em] text-cream/50"
+          className="mt-8 text-[10px] uppercase tracking-[0.4em]"
+          style={{ color: isDark ? 'hsl(var(--cream) / 0.5)' : 'hsl(var(--brown) / 0.5)' }}
         >
           by zaighum mujahid
         </motion.p>
