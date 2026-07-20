@@ -141,6 +141,17 @@ export function Hero() {
               transition={{ duration: s.duration + 3, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
             />
           ))}
+
+          {/* A few faint stars, still visible against a bright daytime sky */}
+          {farStars.slice(0, 25).map((s) => (
+            <motion.div
+              key={`daystar-${s.id}`}
+              className="absolute rounded-full bg-white"
+              style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size + 0.5, height: s.size + 0.5 }}
+              animate={{ opacity: [0.15, 0.55, 0.15] }}
+              transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
+            />
+          ))}
         </>
       )}
 
@@ -248,7 +259,10 @@ export function Hero() {
         </motion.button>
       )}
 
-      {/* Veil split open */}
+      {/* Veil split open - fully clips away (not just to 50%) so the
+          galaxy/sky layers underneath actually become visible once revealed.
+          The previous version left both panels covering 50% each (100%
+          combined), permanently hiding everything behind them. */}
       <motion.div
         className="absolute inset-0 z-[15]"
         style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
