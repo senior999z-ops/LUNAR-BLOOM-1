@@ -92,29 +92,53 @@ export function Hero() {
         />
       )}
 
-      {/* DAY: soft sky gradient + drifting clouds */}
+      {/* DAY: soft sky gradient + drifting clouds + light sparkles */}
       {!isDark && (
         <>
           <div
             className="absolute inset-0"
             style={{
-              background: 'linear-gradient(180deg, hsl(45 70% 88%), hsl(30 60% 90%) 60%, hsl(30 47% 90%))',
+              background: 'linear-gradient(180deg, hsl(45 75% 85%), hsl(35 65% 88%) 55%, hsl(30 47% 90%))',
             }}
           />
           {clouds.map((c) => (
             <motion.div
               key={c.id}
-              className="absolute rounded-full opacity-60"
+              className="absolute opacity-80"
               style={{
                 top: `${c.top}%`,
-                width: 160 * c.scale,
-                height: 50 * c.scale,
-                background: 'radial-gradient(ellipse, hsl(var(--cream-50) / 0.9), transparent 70%)',
-                filter: 'blur(8px)',
+                width: 200 * c.scale,
+                height: 70 * c.scale,
               }}
               initial={{ left: `${c.left}%` }}
-              animate={{ left: ['-20%', '120%'] }}
+              animate={{ left: ['-25%', '125%'] }}
               transition={{ duration: c.duration, repeat: Infinity, ease: 'linear' }}
+            >
+              <div
+                className="absolute h-full w-full rounded-full"
+                style={{
+                  background: 'radial-gradient(ellipse, hsl(0 0% 100% / 0.95), hsl(40 50% 92% / 0.5) 60%, transparent 80%)',
+                  filter: 'blur(4px)',
+                }}
+              />
+              <div
+                className="absolute left-[15%] top-[10%] h-[70%] w-[55%] rounded-full"
+                style={{
+                  background: 'radial-gradient(ellipse, hsl(0 0% 100% / 0.9), transparent 75%)',
+                  filter: 'blur(3px)',
+                }}
+              />
+            </motion.div>
+          ))}
+
+          {/* Golden light sparkles drifting up, like dust in sunlight */}
+          {nearStars.slice(0, 24).map((s) => (
+            <motion.div
+              key={`sparkle-${s.id}`}
+              className="absolute rounded-full bg-gold"
+              style={{ top: `${s.top}%`, left: `${s.left}%`, width: Math.max(s.size, 1.5), height: Math.max(s.size, 1.5) }}
+              animate={{ opacity: [0, 0.7, 0], y: [0, -30, -60] }}
+              transition={{ duration: s.duration + 3, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
             />
           ))}
         </>
@@ -185,15 +209,27 @@ export function Hero() {
             />
           </motion.div>
         ) : (
-          <motion.div
-            className="h-56 w-56 rounded-full md:h-72 md:w-72"
-            style={{
-              background: 'radial-gradient(circle at 35% 35%, hsl(45 90% 90%), hsl(45 85% 65%) 55%, hsl(35 75% 55%))',
-              boxShadow: '0 0 100px hsl(45 85% 65% / 0.6), 0 0 200px hsl(45 85% 65% / 0.3)',
-            }}
-            animate={{ scale: [1, 1.04, 1] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          />
+          <>
+            {/* Rotating rays behind the sun */}
+            <motion.div
+              className="absolute left-1/2 top-1/2 -z-[1] h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 opacity-40"
+              style={{
+                background:
+                  'repeating-conic-gradient(hsl(45 85% 70% / 0.5) 0deg 4deg, transparent 4deg 18deg)',
+              }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 90, repeat: Infinity, ease: 'linear' }}
+            />
+            <motion.div
+              className="h-56 w-56 rounded-full md:h-72 md:w-72"
+              style={{
+                background: 'radial-gradient(circle at 35% 35%, hsl(45 90% 90%), hsl(45 85% 65%) 55%, hsl(35 75% 55%))',
+                boxShadow: '0 0 100px hsl(45 85% 65% / 0.6), 0 0 200px hsl(45 85% 65% / 0.3)',
+              }}
+              animate={{ scale: [1, 1.04, 1] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </>
         )}
       </motion.div>
 
@@ -212,8 +248,7 @@ export function Hero() {
         </motion.button>
       )}
 
-      {/* Veil split open — FIXED: now fully clips to 100% instead of 50%,
-          so it actually clears away and reveals the galaxy/sky underneath */}
+      {/* Veil split open */}
       <motion.div
         className="absolute inset-0 z-[15]"
         style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
