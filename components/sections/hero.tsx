@@ -212,19 +212,20 @@ export function Hero() {
         </motion.button>
       )}
 
-      {/* Veil split open */}
+      {/* Veil split open — FIXED: now fully clips to 100% instead of 50%,
+          so it actually clears away and reveals the galaxy/sky underneath */}
       <motion.div
         className="absolute inset-0 z-[15]"
         style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
         initial={{ clipPath: 'inset(0% 0% 0% 0%)' }}
-        animate={revealed ? { clipPath: 'inset(0% 0% 50% 0%)' } : {}}
+        animate={revealed ? { clipPath: 'inset(0% 0% 100% 0%)' } : {}}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
       />
       <motion.div
         className="absolute inset-0 z-[15]"
         style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
         initial={{ clipPath: 'inset(0% 0% 0% 0%)' }}
-        animate={revealed ? { clipPath: 'inset(50% 0% 0% 0%)' } : {}}
+        animate={revealed ? { clipPath: 'inset(100% 0% 0% 0%)' } : {}}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
       />
 
