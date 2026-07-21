@@ -109,7 +109,6 @@ export function Hero() {
             }}
           />
 
-          {/* Warm horizon glow near the bottom */}
           <div
             className="absolute inset-x-0 bottom-0 h-1/3"
             style={{
@@ -117,7 +116,6 @@ export function Hero() {
             }}
           />
 
-          {/* Soft light beam fanning out from the sun */}
           <div
             className="absolute right-0 top-0 h-full w-full opacity-30"
             style={{
@@ -155,7 +153,6 @@ export function Hero() {
             </motion.div>
           ))}
 
-          {/* Birds — simple drifting "M" shapes crossing the sky */}
           {birds.map((b) => (
             <motion.svg
               key={`bird-${b.id}`}
@@ -176,7 +173,6 @@ export function Hero() {
             </motion.svg>
           ))}
 
-          {/* Golden light sparkles drifting up, like dust in sunlight */}
           {nearStars.slice(0, 24).map((s) => (
             <motion.div
               key={`sparkle-${s.id}`}
@@ -187,7 +183,6 @@ export function Hero() {
             />
           ))}
 
-          {/* A few faint stars, still visible against a bright daytime sky */}
           {farStars.slice(0, 25).map((s) => (
             <motion.div
               key={`daystar-${s.id}`}
@@ -266,7 +261,6 @@ export function Hero() {
           </motion.div>
         ) : (
           <>
-            {/* Rotating rays behind the sun */}
             <motion.div
               className="absolute left-1/2 top-1/2 -z-[1] h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 opacity-40"
               style={{
@@ -304,7 +298,6 @@ export function Hero() {
         </motion.button>
       )}
 
-      {/* Veil split open */}
       <motion.div
         className="absolute inset-0 z-[15]"
         style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
@@ -320,7 +313,6 @@ export function Hero() {
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
       />
 
-      {/* ONLY: LUNAR BLOOM + TOUCH ME PLEASE button */}
       <div className="relative z-20 flex flex-col items-center px-6 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
@@ -334,3 +326,82 @@ export function Hero() {
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
+          animate={revealed ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 2.2, duration: 0.8 }}
+          className="mt-12"
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+        >
+          <button
+            onClick={handleEnter}
+            data-cursor-label="enter"
+            disabled={clicked}
+            className="group relative inline-flex items-center justify-center"
+          >
+            {!clicked && (
+              <>
+                <motion.span
+                  className="absolute inset-0 rounded-full border border-gold/30"
+                  animate={{ scale: [1, 1.5], opacity: [0.6, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+                />
+                <motion.span
+                  className="absolute inset-0 rounded-full border border-gold/20"
+                  animate={{ scale: [1, 1.8], opacity: [0.4, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.5, ease: 'easeOut' }}
+                />
+                <motion.span
+                  className="absolute inset-0 rounded-full border border-gold/10"
+                  animate={{ scale: [1, 2.1], opacity: [0.3, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 1, ease: 'easeOut' }}
+                />
+              </>
+            )}
+
+            {clicked && (
+              <>
+                {[...Array(10)].map((_, i) => (
+                  <motion.span
+                    key={i}
+                    className="absolute left-1/2 top-1/2 h-1 w-16 origin-left rounded-full bg-gold"
+                    initial={{ opacity: 1, scale: 0 }}
+                    animate={{ opacity: [1, 0], scale: [0, 2.2] }}
+                    transition={{ duration: 0.65, ease: 'easeOut' }}
+                    style={{ rotate: (i / 10) * 360 }}
+                  />
+                ))}
+                <motion.span
+                  className="absolute inset-0 rounded-full bg-gold/40"
+                  initial={{ scale: 1, opacity: 0.6 }}
+                  animate={{ scale: 5, opacity: 0 }}
+                  transition={{ duration: 0.65, ease: 'easeOut' }}
+                />
+              </>
+            )}
+
+            <motion.span
+              animate={{
+                scale: clicked ? [1, 1.15, 0.85] : hovering ? 1.08 : 1,
+                opacity: clicked ? [1, 1, 0] : 1,
+              }}
+              transition={{ duration: clicked ? 0.65 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="relative flex items-center gap-3 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-12 py-5 text-sm font-medium uppercase tracking-[0.3em] text-brown-dark shadow-xl"
+            >
+              touch me please
+            </motion.span>
+          </button>
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={revealed ? { opacity: 1 } : {}}
+          transition={{ delay: 2.8, duration: 1 }}
+          className="mt-8 text-[10px] uppercase tracking-[0.4em]"
+          style={{ color: isDark ? 'hsl(var(--cream) / 0.5)' : 'hsl(var(--brown) / 0.5)' }}
+        >
+          by zaighum mujahid
+        </motion.p>
+      </div>
+    </section>
+  );
+}
