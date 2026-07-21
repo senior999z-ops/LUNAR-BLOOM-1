@@ -161,7 +161,7 @@ export function Providers({ children }: { children: ReactNode }) {
     const t = setTimeout(() => {
       setLoading(false);
       sessionStorage.setItem('lb_loaded', '1');
-    }, 900);
+    }, 2200);
     return () => clearTimeout(t);
   }, []);
 
