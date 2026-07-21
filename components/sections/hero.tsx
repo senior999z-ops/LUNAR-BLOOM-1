@@ -45,6 +45,7 @@ export function Hero() {
   const [nearStars, setNearStars] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
   const [shootingStars, setShootingStars] = useState<Array<{ id: number; top: number; left: number; delay: number }>>([]);
   const [clouds, setClouds] = useState<Array<{ id: number; top: number; left: number; scale: number; duration: number }>>([]);
+  const [birds, setBirds] = useState<Array<{ id: number; top: number; delay: number; duration: number; scale: number }>>([]);
 
   useEffect(() => {
     const mobile = window.matchMedia('(max-width: 767px)').matches;
@@ -70,6 +71,12 @@ export function Hero() {
       Array.from({ length: mobile ? 3 : 5 }, (_, i) => ({
         id: i, top: 10 + Math.random() * 50, left: Math.random() * 100,
         scale: Math.random() * 0.6 + 0.7, duration: Math.random() * 40 + 60,
+      }))
+    );
+    setBirds(
+      Array.from({ length: mobile ? 2 : 4 }, (_, i) => ({
+        id: i, top: 15 + Math.random() * 30, delay: i * 8 + Math.random() * 5,
+        duration: Math.random() * 15 + 20, scale: Math.random() * 0.4 + 0.6,
       }))
     );
   }, []);
@@ -101,6 +108,23 @@ export function Hero() {
               background: 'linear-gradient(180deg, hsl(45 75% 85%), hsl(35 65% 88%) 55%, hsl(30 47% 90%))',
             }}
           />
+
+          {/* Warm horizon glow near the bottom */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-1/3"
+            style={{
+              background: 'linear-gradient(0deg, hsl(35 70% 80% / 0.6), transparent)',
+            }}
+          />
+
+          {/* Soft light beam fanning out from the sun */}
+          <div
+            className="absolute right-0 top-0 h-full w-full opacity-30"
+            style={{
+              background: 'conic-gradient(from 200deg at 88% 22%, hsl(45 90% 80% / 0.5), transparent 35%)',
+            }}
+          />
+
           {clouds.map((c) => (
             <motion.div
               key={c.id}
@@ -129,6 +153,27 @@ export function Hero() {
                 }}
               />
             </motion.div>
+          ))}
+
+          {/* Birds — simple drifting "M" shapes crossing the sky */}
+          {birds.map((b) => (
+            <motion.svg
+              key={`bird-${b.id}`}
+              viewBox="0 0 24 12"
+              className="absolute"
+              style={{ top: `${b.top}%`, width: 24 * b.scale, height: 12 * b.scale }}
+              initial={{ left: '-10%', opacity: 0 }}
+              animate={{ left: '110%', opacity: [0, 0.5, 0.5, 0] }}
+              transition={{ duration: b.duration, repeat: Infinity, delay: b.delay, ease: 'linear' }}
+            >
+              <path
+                d="M0 6 Q6 0 12 6 Q18 0 24 6"
+                stroke="hsl(16 30% 27% / 0.5)"
+                strokeWidth="1.2"
+                fill="none"
+                strokeLinecap="round"
+              />
+            </motion.svg>
           ))}
 
           {/* Golden light sparkles drifting up, like dust in sunlight */}
@@ -259,10 +304,7 @@ export function Hero() {
         </motion.button>
       )}
 
-      {/* Veil split open - fully clips away (not just to 50%) so the
-          galaxy/sky layers underneath actually become visible once revealed.
-          The previous version left both panels covering 50% each (100%
-          combined), permanently hiding everything behind them. */}
+      {/* Veil split open */}
       <motion.div
         className="absolute inset-0 z-[15]"
         style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
@@ -292,82 +334,3 @@ export function Hero() {
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={revealed ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 2.2, duration: 0.8 }}
-          className="mt-12"
-          onMouseEnter={() => setHovering(true)}
-          onMouseLeave={() => setHovering(false)}
-        >
-          <button
-            onClick={handleEnter}
-            data-cursor-label="enter"
-            disabled={clicked}
-            className="group relative inline-flex items-center justify-center"
-          >
-            {!clicked && (
-              <>
-                <motion.span
-                  className="absolute inset-0 rounded-full border border-gold/30"
-                  animate={{ scale: [1, 1.5], opacity: [0.6, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
-                />
-                <motion.span
-                  className="absolute inset-0 rounded-full border border-gold/20"
-                  animate={{ scale: [1, 1.8], opacity: [0.4, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 0.5, ease: 'easeOut' }}
-                />
-                <motion.span
-                  className="absolute inset-0 rounded-full border border-gold/10"
-                  animate={{ scale: [1, 2.1], opacity: [0.3, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 1, ease: 'easeOut' }}
-                />
-              </>
-            )}
-
-            {clicked && (
-              <>
-                {[...Array(10)].map((_, i) => (
-                  <motion.span
-                    key={i}
-                    className="absolute left-1/2 top-1/2 h-1 w-16 origin-left rounded-full bg-gold"
-                    initial={{ opacity: 1, scale: 0 }}
-                    animate={{ opacity: [1, 0], scale: [0, 2.2] }}
-                    transition={{ duration: 0.65, ease: 'easeOut' }}
-                    style={{ rotate: (i / 10) * 360 }}
-                  />
-                ))}
-                <motion.span
-                  className="absolute inset-0 rounded-full bg-gold/40"
-                  initial={{ scale: 1, opacity: 0.6 }}
-                  animate={{ scale: 5, opacity: 0 }}
-                  transition={{ duration: 0.65, ease: 'easeOut' }}
-                />
-              </>
-            )}
-
-            <motion.span
-              animate={{
-                scale: clicked ? [1, 1.15, 0.85] : hovering ? 1.08 : 1,
-                opacity: clicked ? [1, 1, 0] : 1,
-              }}
-              transition={{ duration: clicked ? 0.65 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="relative flex items-center gap-3 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-12 py-5 text-sm font-medium uppercase tracking-[0.3em] text-brown-dark shadow-xl"
-            >
-              touch me please
-            </motion.span>
-          </button>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={revealed ? { opacity: 1 } : {}}
-          transition={{ delay: 2.8, duration: 1 }}
-          className="mt-8 text-[10px] uppercase tracking-[0.4em]"
-          style={{ color: isDark ? 'hsl(var(--cream) / 0.5)' : 'hsl(var(--brown) / 0.5)' }}
-        >
-          by zaighum mujahid
-        </motion.p>
-      </div>
-    </section>
-  );
-}
