@@ -135,10 +135,6 @@ function WishlistProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// No AnimatePresence/mode="wait" here — that setup could get stuck waiting
-// for an "exit" animation that never resolved during a client-side route
-// change, which is what was leaving the screen blank until a hard refresh.
-// This version fades the new page in but never blocks it from mounting.
 function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   return (
@@ -161,8 +157,6 @@ export function Providers({ children }: { children: ReactNode }) {
   const hideChrome = isHome || isCollections;
 
   useEffect(() => {
-    // Full-screen loader now shows only once per browser session (not on
-    // every page navigation, and not on every fresh visit).
     if (sessionStorage.getItem('lb_loaded')) return;
     setLoading(true);
     const t = setTimeout(() => {
@@ -175,7 +169,7 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="dark"
+      defaultTheme="light"
       enableSystem={false}
       disableTransitionOnChange
     >
