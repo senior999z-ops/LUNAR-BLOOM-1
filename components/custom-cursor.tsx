@@ -22,23 +22,43 @@ export function CustomCursor() {
   }, []);
 
   useEffect(() => {
+    let rafPending = false;
+    let lastVariant: 'default' | 'hover' | 'text' = 'default';
+    let lastLabel = '';
+
     const move = (e: MouseEvent) => {
       x.set(e.clientX);
       y.set(e.clientY);
-      setHidden(false);
+      if (hidden) setHidden(false);
 
-      const target = e.target as HTMLElement;
-      if (target.closest('a, button, [role="button"]')) {
-        setVariant('hover');
-        const link = target.closest('a, button');
-        setLabel(link?.getAttribute('data-cursor-label') || '');
-      } else if (target.closest('input, textarea, select')) {
-        setVariant('text');
-        setLabel('');
-      } else {
-        setVariant('default');
-        setLabel('');
-      }
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(() => {
+        rafPending = false;
+        const target = e.target as HTMLElement;
+        let nextVariant: 'default' | 'hover' | 'text' = 'default';
+        let nextLabel = '';
+
+        if (target.closest('a, button, [role="button"]')) {
+          nextVariant = 'hover';
+          const link = target.closest('a, button');
+          nextLabel = link?.getAttribute('data-cursor-label') || '';
+        } else if (target.closest('input, textarea, select')) {
+          nextVariant = 'text';
+        }
+
+        // Only trigger a re-render when something actually changed —
+        // this was re-rendering the whole cursor tree on every mousemove
+        // event, which is what caused the lag/jank while hovering products.
+        if (nextVariant !== lastVariant) {
+          lastVariant = nextVariant;
+          setVariant(nextVariant);
+        }
+        if (nextLabel !== lastLabel) {
+          lastLabel = nextLabel;
+          setLabel(nextLabel);
+        }
+      });
     };
     const leave = () => setHidden(true);
     window.addEventListener('mousemove', move);
@@ -47,7 +67,7 @@ export function CustomCursor() {
       window.removeEventListener('mousemove', move);
       document.body.removeEventListener('mouseleave', leave);
     };
-  }, [x, y]);
+  }, [x, y, hidden]);
 
   if (isTouch) {
     return null;

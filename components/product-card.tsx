@@ -27,14 +27,12 @@ export function ProductCard({ product, index, onQuickView }: ProductCardProps) {
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.7, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className="group relative"
-      style={{ perspective: 1200 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <motion.div
-        whileHover={{ rotateY: 6, rotateX: -3, scale: 1.03 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        style={{ transformStyle: 'preserve-3d' }}
+        whileHover={{ scale: 1.02 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="relative overflow-hidden rounded-3xl border border-brown/10 bg-cream-50/30 dark:border-cream/10 dark:bg-cream/5"
       >
         {/* Image container with veil reveal */}
@@ -89,7 +87,7 @@ export function ProductCard({ product, index, onQuickView }: ProductCardProps) {
               whileHover={{ scale: 1.15 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => toggle(product.id)}
-              className="flex h-10 w-10 items-center justify-center rounded-full glass-strong text-brown dark:text-cream"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-cream-50/90 dark:bg-brown-dark/90 text-brown dark:text-cream"
             >
               <Heart className={cn('h-4 w-4', has(product.id) && 'fill-gold text-gold')} />
             </motion.button>
@@ -102,7 +100,7 @@ export function ProductCard({ product, index, onQuickView }: ProductCardProps) {
                 whileHover={{ scale: 1.15 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => onQuickView(product)}
-                className="flex h-10 w-10 items-center justify-center rounded-full glass-strong text-brown dark:text-cream"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-cream-50/90 dark:bg-brown-dark/90 text-brown dark:text-cream"
               >
                 <Eye className="h-4 w-4" />
               </motion.button>
@@ -143,10 +141,7 @@ export function ProductCard({ product, index, onQuickView }: ProductCardProps) {
         </div>
 
         {/* Info — minimal, just name */}
-        <div
-          className="p-5"
-          style={{ transform: 'translateZ(40px)', transformStyle: 'preserve-3d' }}
-        >
+        <div className="p-5">
           <Link href={`/shop/${product.id}`}>
             <h3 className="font-serif text-xl text-brown transition-colors hover:text-gold dark:text-cream">
               {product.name}
