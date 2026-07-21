@@ -1,12 +1,9 @@
-import { AboutSection } from '@/components/sections/about-section';
 import { PhilosophySection } from '@/components/sections/philosophy-section';
 import { Reveal, TextReveal } from '@/components/reveal';
-import { FloatingBackButton } from '@/components/floating-back-button';
 
 export default function AboutPage() {
   return (
     <main className="relative z-10 min-h-screen pt-32">
-      <FloatingBackButton />
       <div className="mx-auto max-w-5xl px-6 lg:px-10">
         <div className="mb-20 text-center">
           <Reveal direction="blur">
@@ -20,15 +17,14 @@ export default function AboutPage() {
               LUNAR BLOOM is the vision of Zaighum Mujahid — a Pakistani women's
               clothing brand where heritage meets modern elegance. We craft each
               piece in Lahore, honoring centuries of textile tradition while
-              designing for the woman of today. From pret lawn suits to heirloom
-              bridal lehengas, every garment is a celebration of Pakistani craft.
+              designing for the woman of today. From pret lawn suits to formal
+              wear, every garment is a celebration of Pakistani craft.
             </p>
           </Reveal>
         </div>
       </div>
 
       <PhilosophySection />
-      <AboutSection />
     </main>
   );
 }
