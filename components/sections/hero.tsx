@@ -70,7 +70,7 @@ export function Hero() {
     >
       {/* Ambient gradient wash — refined, not cartoonish */}
       <div
-        className="absolute inset-0"
+        className="pointer-events-none absolute inset-0"
         style={{
           background: isDark
             ? 'radial-gradient(ellipse 70% 60% at 50% 30%, hsl(var(--brown) / 0.4), transparent 70%)'
@@ -105,7 +105,7 @@ export function Hero() {
       <div className="pointer-events-none absolute inset-0 bg-noise opacity-[0.04]" />
 
       {/* Fine drifting dust / stardust — subtle, not cluttered */}
-      <div className="absolute inset-0">
+      <div className="pointer-events-none absolute inset-0">
         {dust.map((d) => (
           <motion.div
             key={d.id}
@@ -342,6 +342,25 @@ export function Hero() {
         </motion.div>
       </motion.div>
 
+      {/* Elegant corner ribbon badge — top left */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: revealed ? 1 : 0, x: revealed ? 0 : -20 }}
+        transition={{ delay: 2.8, duration: 1 }}
+        className="pointer-events-none absolute left-8 top-8 hidden items-center gap-2 md:flex md:left-14 md:top-14"
+      >
+        <div
+          className="h-1 w-1 rounded-full"
+          style={{ backgroundColor: isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))' }}
+        />
+        <span
+          className="text-[9px] uppercase tracking-[0.35em]"
+          style={{ color: isDark ? 'hsl(var(--gold) / 0.6)' : 'hsl(var(--gold-dark) / 0.6)' }}
+        >
+          Pakistan
+        </span>
+      </motion.div>
+
       {/* Light / Dark toggle */}
       {mounted && (
         <motion.button
@@ -420,10 +439,21 @@ export function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={revealed ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 1.5, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="font-serif text-5xl font-light leading-none tracking-[0.08em] md:text-[6.5rem] lg:text-[8rem]"
+          className="relative font-serif text-5xl font-light leading-none tracking-[0.08em] md:text-[6.5rem] lg:text-[8rem]"
           style={{ color: textColor }}
         >
           <span className="text-gradient-gold">LUNAR BLOOM</span>
+          {/* Shimmer sweep across the title */}
+          <motion.span
+            className="pointer-events-none absolute inset-0 -skew-x-12"
+            style={{
+              background: 'linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.35), transparent)',
+              mixBlendMode: 'overlay',
+            }}
+            initial={{ x: '-120%' }}
+            animate={{ x: '120%' }}
+            transition={{ delay: 3.5, duration: 2, repeat: Infinity, repeatDelay: 5, ease: 'easeInOut' }}
+          />
         </motion.h1>
 
         <motion.div
