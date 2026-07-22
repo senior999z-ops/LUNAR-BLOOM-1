@@ -42,6 +42,7 @@ export function Hero() {
   }, []);
 
   const [dust, setDust] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
+  const [petals, setPetals] = useState<Array<{ id: number; left: number; delay: number; duration: number }>>([]);
 
   useEffect(() => {
     const mobile = window.matchMedia('(max-width: 767px)').matches;
@@ -49,6 +50,12 @@ export function Hero() {
       Array.from({ length: mobile ? 18 : 36 }, (_, i) => ({
         id: i, top: Math.random() * 100, left: Math.random() * 100,
         size: Math.random() * 1.5 + 0.5, delay: Math.random() * 6, duration: Math.random() * 5 + 5,
+      }))
+    );
+    setPetals(
+      Array.from({ length: mobile ? 3 : 6 }, (_, i) => ({
+        id: i, left: Math.random() * 90 + 5,
+        delay: i * 6 + Math.random() * 4, duration: Math.random() * 8 + 16,
       }))
     );
   }, []);
@@ -97,6 +104,30 @@ export function Hero() {
         ))}
       </div>
 
+      {/* Slow falling golden petals — a romantic, boutique touch */}
+      <div className="pointer-events-none absolute inset-0 hidden md:block">
+        {petals.map((p) => (
+          <motion.div
+            key={p.id}
+            className="absolute -top-10"
+            style={{ left: `${p.left}%` }}
+            animate={{ y: ['0vh', '110vh'], x: [0, 25, -15, 10, 0], rotate: [0, 200, 380] }}
+            transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: 'linear' }}
+          >
+            <div
+              style={{
+                width: 10,
+                height: 13,
+                background: isDark
+                  ? 'linear-gradient(135deg, hsl(var(--gold) / 0.5), transparent)'
+                  : 'linear-gradient(135deg, hsl(var(--gold-dark) / 0.4), transparent)',
+                borderRadius: '100% 0 100% 0',
+              }}
+            />
+          </motion.div>
+        ))}
+      </div>
+
       {/* Ornamental corner frame — the signature "boutique" touch */}
       <div className="pointer-events-none absolute inset-6 md:inset-10">
         {[
@@ -116,22 +147,48 @@ export function Hero() {
         ))}
       </div>
 
-      {/* Minimal emblem — thin ring with soft inner glow, replaces literal sun/moon */}
+      {/* Minimal emblem — concentric rings + rotating seal text, replaces literal sun/moon */}
       <motion.div
         style={{ x: sx, y: sy }}
         className="absolute top-[14%] z-[1] md:right-[12%]"
       >
-        <motion.div
+        {/* Outer ring with circular "seal" text, rotating slowly */}
+        <motion.svg
+          viewBox="0 0 200 200"
+          className="h-40 w-40 md:h-56 md:w-56"
           animate={{ rotate: 360 }}
-          transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
-          className="relative flex h-40 w-40 items-center justify-center rounded-full border md:h-56 md:w-56"
-          style={{ borderColor: isDark ? 'hsl(var(--gold) / 0.25)' : 'hsl(var(--gold-dark) / 0.3)' }}
+          transition={{ duration: 90, repeat: Infinity, ease: 'linear' }}
+        >
+          <defs>
+            <path id="sealCircle" d="M 100,100 m -85,0 a 85,85 0 1,1 170,0 a 85,85 0 1,1 -170,0" />
+          </defs>
+          <circle
+            cx="100" cy="100" r="85"
+            fill="none"
+            stroke={isDark ? 'hsl(var(--gold) / 0.2)' : 'hsl(var(--gold-dark) / 0.25)'}
+            strokeWidth="0.5"
+          />
+          <text fontSize="9.5" letterSpacing="4" fill={isDark ? 'hsl(var(--gold) / 0.55)' : 'hsl(var(--gold-dark) / 0.6)'}>
+            <textPath href="#sealCircle" startOffset="0%">
+              LUNAR BLOOM • HANDCRAFTED IN LAHORE • EST. 2019 •
+            </textPath>
+          </text>
+        </motion.svg>
+
+        {/* Inner ring, rotating opposite direction */}
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+          className="absolute inset-0 m-auto flex h-24 w-24 items-center justify-center rounded-full border md:h-36 md:w-36"
+          style={{ borderColor: isDark ? 'hsl(var(--gold) / 0.3)' : 'hsl(var(--gold-dark) / 0.35)' }}
         >
           <div
-            className="absolute h-2 w-2 rounded-full"
+            className="absolute h-1.5 w-1.5 rounded-full"
             style={{ top: -1, backgroundColor: isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))' }}
           />
         </motion.div>
+
+        {/* Soft inner glow */}
         <motion.div
           className="absolute inset-0 rounded-full"
           animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
@@ -286,6 +343,23 @@ export function Hero() {
         >
           Zaighum Mujahid
         </motion.p>
+
+        {/* Small flourish beneath the signature */}
+        <motion.svg
+          width="70" height="12" viewBox="0 0 70 12"
+          initial={{ opacity: 0 }}
+          animate={revealed ? { opacity: 1 } : {}}
+          transition={{ delay: 3.1, duration: 1 }}
+          className="mt-2"
+        >
+          <path
+            d="M2 6 Q17 -2 35 6 T68 6"
+            fill="none"
+            stroke={isDark ? 'hsl(var(--gold) / 0.4)' : 'hsl(var(--gold-dark) / 0.4)'}
+            strokeWidth="0.75"
+          />
+          <circle cx="35" cy="6" r="1.5" fill={isDark ? 'hsl(var(--gold) / 0.6)' : 'hsl(var(--gold-dark) / 0.6)'} />
+        </motion.svg>
       </div>
     </section>
   );
