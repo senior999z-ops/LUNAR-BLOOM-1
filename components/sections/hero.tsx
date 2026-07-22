@@ -88,6 +88,22 @@ export function Hero() {
         }}
       />
 
+      {/* Faint monogram watermark in the background */}
+      <div
+        className="pointer-events-none absolute inset-0 flex items-center justify-center select-none"
+        style={{ opacity: isDark ? 0.03 : 0.04 }}
+      >
+        <span
+          className="font-serif text-[28rem] leading-none"
+          style={{ color: isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))' }}
+        >
+          LB
+        </span>
+      </div>
+
+      {/* Subtle grain texture for tactile richness */}
+      <div className="pointer-events-none absolute inset-0 bg-noise opacity-[0.04]" />
+
       {/* Fine drifting dust / stardust — subtle, not cluttered */}
       <div className="absolute inset-0">
         {dust.map((d) => (
@@ -127,6 +143,42 @@ export function Hero() {
           </motion.div>
         ))}
       </div>
+
+      {/* Vertical ornament lines on left and right edges */}
+      {['left-4 md:left-8', 'right-4 md:right-8'].map((pos, side) => (
+        <motion.div
+          key={side}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: revealed ? 1 : 0, height: revealed ? 120 : 0 }}
+          transition={{ delay: 2.6 + side * 0.2, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+          className={`pointer-events-none absolute top-1/2 -translate-y-1/2 w-px ${pos}`}
+          style={{ backgroundColor: isDark ? 'hsl(var(--gold) / 0.25)' : 'hsl(var(--gold-dark) / 0.25)' }}
+        />
+      ))}
+
+      {/* Moon phases row — a quiet nod to "Lunar" in the name */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: revealed ? 1 : 0 }}
+        transition={{ delay: 2.6, duration: 1.2 }}
+        className="pointer-events-none absolute bottom-[18%] left-1/2 hidden -translate-x-1/2 items-center gap-5 md:flex"
+      >
+        {[0, 0.25, 0.5, 0.75, 1].map((phase, i) => (
+          <svg key={i} width="16" height="16" viewBox="0 0 16 16">
+            <circle cx="8" cy="8" r="7" fill="none" stroke={isDark ? 'hsl(var(--gold) / 0.4)' : 'hsl(var(--gold-dark) / 0.4)'} strokeWidth="0.6" />
+            <path
+              d={
+                phase === 0 ? 'M8 1 A7 7 0 0 1 8 15 A3.5 7 0 0 1 8 1 Z' :
+                phase === 0.25 ? 'M8 1 A7 7 0 0 1 8 15 Z' :
+                phase === 0.5 ? 'M8 1 A7 7 0 0 1 8 15 A7 7 0 0 1 8 1 Z' :
+                phase === 0.75 ? 'M8 1 A7 7 0 0 0 8 15 Z' :
+                'M8 1 A7 7 0 0 0 8 15 A3.5 7 0 0 0 8 1 Z'
+              }
+              fill={isDark ? 'hsl(var(--gold) / 0.6)' : 'hsl(var(--gold-dark) / 0.6)'}
+            />
+          </svg>
+        ))}
+      </motion.div>
 
       {/* Constellation — a few stars quietly joined by thin lines */}
       <div className="pointer-events-none absolute left-[8%] top-[60%] hidden md:block">
@@ -274,6 +326,20 @@ export function Hero() {
             filter: 'blur(20px)',
           }}
         />
+
+        {/* Orbiting sparkle, like a tiny moon circling the emblem */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
+        >
+          <motion.div
+            className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full"
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ backgroundColor: isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))', boxShadow: isDark ? '0 0 8px hsl(var(--gold))' : 'none' }}
+          />
+        </motion.div>
       </motion.div>
 
       {/* Light / Dark toggle */}
