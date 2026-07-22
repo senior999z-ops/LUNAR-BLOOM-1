@@ -29,8 +29,8 @@ export function Hero() {
   useEffect(() => {
     setMounted(true);
     const handleMove = (e: MouseEvent) => {
-      mx.set((e.clientX / window.innerWidth - 0.5) * 30);
-      my.set((e.clientY / window.innerHeight - 0.5) * 30);
+      mx.set((e.clientX / window.innerWidth - 0.5) * 20);
+      my.set((e.clientY / window.innerHeight - 0.5) * 20);
     };
     window.addEventListener('mousemove', handleMove);
     return () => window.removeEventListener('mousemove', handleMove);
@@ -41,246 +41,108 @@ export function Hero() {
     return () => clearTimeout(t);
   }, []);
 
-  const [farStars, setFarStars] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
-  const [nearStars, setNearStars] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
-  const [shootingStars, setShootingStars] = useState<Array<{ id: number; top: number; left: number; delay: number }>>([]);
-  const [clouds, setClouds] = useState<Array<{ id: number; top: number; left: number; scale: number; duration: number }>>([]);
-  const [birds, setBirds] = useState<Array<{ id: number; top: number; delay: number; duration: number; scale: number }>>([]);
+  const [dust, setDust] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
 
   useEffect(() => {
     const mobile = window.matchMedia('(max-width: 767px)').matches;
-    setFarStars(
-      Array.from({ length: mobile ? 40 : 90 }, (_, i) => ({
+    setDust(
+      Array.from({ length: mobile ? 18 : 36 }, (_, i) => ({
         id: i, top: Math.random() * 100, left: Math.random() * 100,
-        size: Math.random() * 1.2 + 0.4, delay: Math.random() * 5, duration: Math.random() * 4 + 3,
-      }))
-    );
-    setNearStars(
-      Array.from({ length: mobile ? 20 : 45 }, (_, i) => ({
-        id: i, top: Math.random() * 100, left: Math.random() * 100,
-        size: Math.random() * 2.5 + 1.2, delay: Math.random() * 5, duration: Math.random() * 3 + 2,
-      }))
-    );
-    setShootingStars(
-      Array.from({ length: mobile ? 2 : 4 }, (_, i) => ({
-        id: i, top: Math.random() * 40, left: Math.random() * 60,
-        delay: i * 4 + Math.random() * 3,
-      }))
-    );
-    setClouds(
-      Array.from({ length: mobile ? 3 : 5 }, (_, i) => ({
-        id: i, top: 10 + Math.random() * 50, left: Math.random() * 100,
-        scale: Math.random() * 0.6 + 0.7, duration: Math.random() * 40 + 60,
-      }))
-    );
-    setBirds(
-      Array.from({ length: mobile ? 2 : 4 }, (_, i) => ({
-        id: i, top: 15 + Math.random() * 30, delay: i * 8 + Math.random() * 5,
-        duration: Math.random() * 15 + 20, scale: Math.random() * 0.4 + 0.6,
+        size: Math.random() * 1.5 + 0.5, delay: Math.random() * 6, duration: Math.random() * 5 + 5,
       }))
     );
   }, []);
 
+  const textColor = isDark ? 'hsl(var(--cream))' : 'hsl(var(--brown-dark))';
+  const bgColor = isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))';
+
   return (
     <section
       className="relative flex h-screen items-center justify-center overflow-hidden transition-colors duration-700"
-      style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
+      style={{ backgroundColor: bgColor }}
     >
-      {/* NIGHT: galaxy nebula swirl */}
-      {isDark && (
-        <motion.div
-          className="absolute inset-0 opacity-70"
-          style={{
-            background:
-              'radial-gradient(ellipse 80% 60% at 30% 20%, hsl(280 40% 30% / 0.35), transparent 60%), radial-gradient(ellipse 70% 50% at 75% 70%, hsl(45 65% 35% / 0.3), transparent 60%), radial-gradient(ellipse 60% 60% at 50% 100%, hsl(15 40% 20% / 0.5), transparent 70%)',
-          }}
-          animate={{ opacity: [0.6, 0.85, 0.6] }}
-          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-        />
-      )}
+      {/* Ambient gradient wash — refined, not cartoonish */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: isDark
+            ? 'radial-gradient(ellipse 70% 60% at 50% 30%, hsl(var(--brown) / 0.4), transparent 70%)'
+            : 'radial-gradient(ellipse 70% 60% at 50% 30%, hsl(45 60% 88%), transparent 70%)',
+        }}
+      />
 
-      {/* DAY: soft sky gradient + drifting clouds + light sparkles */}
-      {!isDark && (
-        <>
-          <div
-            className="absolute inset-0"
+      {/* Cinematic vignette */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: isDark
+            ? 'radial-gradient(ellipse 60% 60% at 50% 50%, transparent 40%, hsl(var(--brown-dark) / 0.7) 100%)'
+            : 'radial-gradient(ellipse 60% 60% at 50% 50%, transparent 40%, hsl(35 40% 75% / 0.35) 100%)',
+        }}
+      />
+
+      {/* Fine drifting dust / stardust — subtle, not cluttered */}
+      <div className="absolute inset-0">
+        {dust.map((d) => (
+          <motion.div
+            key={d.id}
+            className="absolute rounded-full"
             style={{
-              background: 'linear-gradient(180deg, hsl(45 75% 85%), hsl(35 65% 88%) 55%, hsl(30 47% 90%))',
+              top: `${d.top}%`, left: `${d.left}%`, width: d.size, height: d.size,
+              backgroundColor: isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))',
             }}
+            animate={{ opacity: [0, 0.5, 0], y: [0, -20, -40] }}
+            transition={{ duration: d.duration, repeat: Infinity, delay: d.delay, ease: 'easeInOut' }}
           />
+        ))}
+      </div>
 
-          <div
-            className="absolute inset-x-0 bottom-0 h-1/3"
-            style={{
-              background: 'linear-gradient(0deg, hsl(35 70% 80% / 0.6), transparent)',
-            }}
+      {/* Ornamental corner frame — the signature "boutique" touch */}
+      <div className="pointer-events-none absolute inset-6 md:inset-10">
+        {[
+          'top-0 left-0 border-t border-l',
+          'top-0 right-0 border-t border-r',
+          'bottom-0 left-0 border-b border-l',
+          'bottom-0 right-0 border-b border-r',
+        ].map((pos, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: revealed ? 1 : 0 }}
+            transition={{ delay: 1.8 + i * 0.1, duration: 1 }}
+            className={`absolute h-10 w-10 md:h-14 md:w-14 ${pos}`}
+            style={{ borderColor: isDark ? 'hsl(var(--gold) / 0.4)' : 'hsl(var(--gold-dark) / 0.5)' }}
           />
+        ))}
+      </div>
 
-          <div
-            className="absolute right-0 top-0 h-full w-full opacity-30"
-            style={{
-              background: 'conic-gradient(from 200deg at 88% 22%, hsl(45 90% 80% / 0.5), transparent 35%)',
-            }}
-          />
-
-          {clouds.map((c) => (
-            <motion.div
-              key={c.id}
-              className="absolute opacity-80"
-              style={{
-                top: `${c.top}%`,
-                width: 200 * c.scale,
-                height: 70 * c.scale,
-              }}
-              initial={{ left: `${c.left}%` }}
-              animate={{ left: ['-25%', '125%'] }}
-              transition={{ duration: c.duration, repeat: Infinity, ease: 'linear' }}
-            >
-              <div
-                className="absolute h-full w-full rounded-full"
-                style={{
-                  background: 'radial-gradient(ellipse, hsl(0 0% 100% / 0.95), hsl(40 50% 92% / 0.5) 60%, transparent 80%)',
-                  filter: 'blur(4px)',
-                }}
-              />
-              <div
-                className="absolute left-[15%] top-[10%] h-[70%] w-[55%] rounded-full"
-                style={{
-                  background: 'radial-gradient(ellipse, hsl(0 0% 100% / 0.9), transparent 75%)',
-                  filter: 'blur(3px)',
-                }}
-              />
-            </motion.div>
-          ))}
-
-          {birds.map((b) => (
-            <motion.svg
-              key={`bird-${b.id}`}
-              viewBox="0 0 24 12"
-              className="absolute"
-              style={{ top: `${b.top}%`, width: 24 * b.scale, height: 12 * b.scale }}
-              initial={{ left: '-10%', opacity: 0 }}
-              animate={{ left: '110%', opacity: [0, 0.5, 0.5, 0] }}
-              transition={{ duration: b.duration, repeat: Infinity, delay: b.delay, ease: 'linear' }}
-            >
-              <path
-                d="M0 6 Q6 0 12 6 Q18 0 24 6"
-                stroke="hsl(16 30% 27% / 0.5)"
-                strokeWidth="1.2"
-                fill="none"
-                strokeLinecap="round"
-              />
-            </motion.svg>
-          ))}
-
-          {nearStars.slice(0, 24).map((s) => (
-            <motion.div
-              key={`sparkle-${s.id}`}
-              className="absolute rounded-full bg-gold"
-              style={{ top: `${s.top}%`, left: `${s.left}%`, width: Math.max(s.size, 1.5), height: Math.max(s.size, 1.5) }}
-              animate={{ opacity: [0, 0.7, 0], y: [0, -30, -60] }}
-              transition={{ duration: s.duration + 3, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
-            />
-          ))}
-
-          {farStars.slice(0, 25).map((s) => (
-            <motion.div
-              key={`daystar-${s.id}`}
-              className="absolute rounded-full bg-white"
-              style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size + 0.5, height: s.size + 0.5 }}
-              animate={{ opacity: [0.15, 0.55, 0.15] }}
-              transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
-            />
-          ))}
-        </>
-      )}
-
-      {/* NIGHT: star layers */}
-      {isDark && (
-        <>
-          <div className="absolute inset-0">
-            {farStars.map((s) => (
-              <motion.div
-                key={`far-${s.id}`}
-                className="absolute rounded-full bg-cream-50"
-                style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size }}
-                animate={{ opacity: [0.05, 0.5, 0.05] }}
-                transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
-              />
-            ))}
-          </div>
-          <div className="absolute inset-0">
-            {nearStars.map((s) => (
-              <motion.div
-                key={`near-${s.id}`}
-                className="absolute rounded-full bg-gold"
-                style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size }}
-                animate={{ opacity: [0.15, 0.95, 0.15], scale: [0.6, 1.8, 0.6] }}
-                transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
-              />
-            ))}
-          </div>
-          <div className="absolute inset-0 hidden lg:block">
-            {shootingStars.map((s) => (
-              <motion.div
-                key={`shoot-${s.id}`}
-                className="absolute h-px w-24 bg-gradient-to-r from-transparent via-cream-50 to-transparent"
-                style={{ top: `${s.top}%`, left: `${s.left}%`, rotate: '25deg' }}
-                initial={{ opacity: 0, x: -60 }}
-                animate={{ opacity: [0, 1, 0], x: [0, 260] }}
-                transition={{ duration: 1.4, repeat: Infinity, repeatDelay: 6, delay: s.delay, ease: 'easeOut' }}
-              />
-            ))}
-          </div>
-        </>
-      )}
-
-      {/* Moon (night) / Sun (day) */}
+      {/* Minimal emblem — thin ring with soft inner glow, replaces literal sun/moon */}
       <motion.div
         style={{ x: sx, y: sy }}
-        className="absolute top-[10%] right-[8%] z-[1]"
+        className="absolute top-[14%] z-[1] md:right-[12%]"
       >
-        {isDark ? (
-          <motion.div
-            className="relative h-72 w-72 rounded-full md:h-96 md:w-96"
-            style={{
-              background: 'radial-gradient(circle at 35% 35%, hsl(var(--cream-50)), hsl(var(--gold) / 0.3) 50%, hsl(var(--brown) / 0.4))',
-              boxShadow: '0 0 140px hsl(var(--gold) / 0.45), 0 0 60px hsl(var(--gold) / 0.3), inset -30px -30px 80px hsl(var(--brown) / 0.35)',
-            }}
-            animate={{ scale: [1, 1.03, 1] }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <div className="absolute left-[20%] top-[30%] h-8 w-8 rounded-full bg-brown/10" />
-            <div className="absolute left-[55%] top-[50%] h-12 w-12 rounded-full bg-brown/10" />
-            <div className="absolute left-[35%] top-[65%] h-6 w-6 rounded-full bg-brown/10" />
-            <motion.div
-              className="absolute -inset-6 rounded-full border border-gold/10"
-              animate={{ scale: [1, 1.08, 1], opacity: [0.4, 0.7, 0.4] }}
-              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            />
-          </motion.div>
-        ) : (
-          <>
-            <motion.div
-              className="absolute left-1/2 top-1/2 -z-[1] h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 opacity-40"
-              style={{
-                background:
-                  'repeating-conic-gradient(hsl(45 85% 70% / 0.5) 0deg 4deg, transparent 4deg 18deg)',
-              }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 90, repeat: Infinity, ease: 'linear' }}
-            />
-            <motion.div
-              className="h-56 w-56 rounded-full md:h-72 md:w-72"
-              style={{
-                background: 'radial-gradient(circle at 35% 35%, hsl(45 90% 90%), hsl(45 85% 65%) 55%, hsl(35 75% 55%))',
-                boxShadow: '0 0 100px hsl(45 85% 65% / 0.6), 0 0 200px hsl(45 85% 65% / 0.3)',
-              }}
-              animate={{ scale: [1, 1.04, 1] }}
-              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            />
-          </>
-        )}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
+          className="relative flex h-40 w-40 items-center justify-center rounded-full border md:h-56 md:w-56"
+          style={{ borderColor: isDark ? 'hsl(var(--gold) / 0.25)' : 'hsl(var(--gold-dark) / 0.3)' }}
+        >
+          <div
+            className="absolute h-2 w-2 rounded-full"
+            style={{ top: -1, backgroundColor: isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))' }}
+          />
+        </motion.div>
+        <motion.div
+          className="absolute inset-0 rounded-full"
+          animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            background: isDark
+              ? 'radial-gradient(circle, hsl(var(--gold) / 0.25), transparent 70%)'
+              : 'radial-gradient(circle, hsl(45 80% 75% / 0.5), transparent 70%)',
+            filter: 'blur(20px)',
+          }}
+        />
       </motion.div>
 
       {/* Light / Dark toggle */}
@@ -288,46 +150,76 @@ export function Hero() {
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 3, duration: 0.8 }}
+          transition={{ delay: 2.4, duration: 0.8 }}
           onClick={() => setTheme(isDark ? 'light' : 'dark')}
           data-cursor-label="theme"
-          className="fixed right-6 top-6 z-30 flex h-11 w-11 items-center justify-center rounded-full glass-strong text-gold"
+          className="fixed right-6 top-6 z-30 flex h-10 w-10 items-center justify-center rounded-full border transition-colors"
+          style={{ borderColor: isDark ? 'hsl(var(--gold) / 0.3)' : 'hsl(var(--gold-dark) / 0.3)', color: isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))' }}
           aria-label="Toggle theme"
         >
           {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </motion.button>
       )}
 
+      {/* Veil split open */}
       <motion.div
         className="absolute inset-0 z-[15]"
-        style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
+        style={{ backgroundColor: bgColor }}
         initial={{ clipPath: 'inset(0% 0% 0% 0%)' }}
         animate={revealed ? { clipPath: 'inset(0% 0% 100% 0%)' } : {}}
-        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
       />
       <motion.div
         className="absolute inset-0 z-[15]"
-        style={{ backgroundColor: isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))' }}
+        style={{ backgroundColor: bgColor }}
         initial={{ clipPath: 'inset(0% 0% 0% 0%)' }}
         animate={revealed ? { clipPath: 'inset(100% 0% 0% 0%)' } : {}}
-        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
       />
 
+      {/* Content */}
       <div className="relative z-20 flex flex-col items-center px-6 text-center">
+        {/* Thin ornamental divider above title */}
+        <motion.div
+          initial={{ opacity: 0, width: 0 }}
+          animate={revealed ? { opacity: 1, width: 64 } : {}}
+          transition={{ delay: 1.3, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-6 h-px"
+          style={{ backgroundColor: isDark ? 'hsl(var(--gold) / 0.5)' : 'hsl(var(--gold-dark) / 0.5)' }}
+        />
+
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={revealed ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 1.4, duration: 0.8 }}
+          className="mb-3 text-[11px] uppercase tracking-[0.6em]"
+          style={{ color: isDark ? 'hsl(var(--gold) / 0.8)' : 'hsl(var(--gold-dark))' }}
+        >
+          Est. Lahore
+        </motion.p>
+
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={revealed ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 1.5, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="font-serif text-5xl font-light leading-none tracking-[0.05em] md:text-[7rem] lg:text-[9rem]"
-          style={{ color: isDark ? 'hsl(var(--cream))' : 'hsl(var(--brown-dark))' }}
+          className="font-serif text-5xl font-light leading-none tracking-[0.08em] md:text-[6.5rem] lg:text-[8rem]"
+          style={{ color: textColor }}
         >
           <span className="text-gradient-gold">LUNAR BLOOM</span>
         </motion.h1>
 
         <motion.div
+          initial={{ opacity: 0, width: 0 }}
+          animate={revealed ? { opacity: 1, width: 64 } : {}}
+          transition={{ delay: 2, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 h-px"
+          style={{ backgroundColor: isDark ? 'hsl(var(--gold) / 0.5)' : 'hsl(var(--gold-dark) / 0.5)' }}
+        />
+
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={revealed ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 2.2, duration: 0.8 }}
+          transition={{ delay: 2.3, duration: 0.8 }}
           className="mt-12"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
@@ -339,55 +231,48 @@ export function Hero() {
             className="group relative inline-flex items-center justify-center"
           >
             {!clicked && (
-              <>
-                <motion.span
-                  className="absolute inset-0 rounded-full border border-gold/30"
-                  animate={{ scale: [1, 1.5], opacity: [0.6, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
-                />
-                <motion.span
-                  className="absolute inset-0 rounded-full border border-gold/20"
-                  animate={{ scale: [1, 1.8], opacity: [0.4, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 0.5, ease: 'easeOut' }}
-                />
-                <motion.span
-                  className="absolute inset-0 rounded-full border border-gold/10"
-                  animate={{ scale: [1, 2.1], opacity: [0.3, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 1, ease: 'easeOut' }}
-                />
-              </>
+              <motion.span
+                className="absolute inset-0 rounded-full border"
+                style={{ borderColor: isDark ? 'hsl(var(--gold) / 0.3)' : 'hsl(var(--gold-dark) / 0.3)' }}
+                animate={{ scale: [1, 1.4], opacity: [0.5, 0] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeOut' }}
+              />
             )}
 
             {clicked && (
               <>
-                {[...Array(10)].map((_, i) => (
+                {[...Array(8)].map((_, i) => (
                   <motion.span
                     key={i}
-                    className="absolute left-1/2 top-1/2 h-1 w-16 origin-left rounded-full bg-gold"
+                    className="absolute left-1/2 top-1/2 h-px w-14 origin-left rounded-full"
+                    style={{
+                      backgroundColor: isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))',
+                      rotate: (i / 8) * 360,
+                    }}
                     initial={{ opacity: 1, scale: 0 }}
-                    animate={{ opacity: [1, 0], scale: [0, 2.2] }}
-                    transition={{ duration: 0.65, ease: 'easeOut' }}
-                    style={{ rotate: (i / 10) * 360 }}
+                    animate={{ opacity: [1, 0], scale: [0, 2] }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
                   />
                 ))}
-                <motion.span
-                  className="absolute inset-0 rounded-full bg-gold/40"
-                  initial={{ scale: 1, opacity: 0.6 }}
-                  animate={{ scale: 5, opacity: 0 }}
-                  transition={{ duration: 0.65, ease: 'easeOut' }}
-                />
               </>
             )}
 
             <motion.span
               animate={{
-                scale: clicked ? [1, 1.15, 0.85] : hovering ? 1.08 : 1,
+                scale: clicked ? [1, 1.06, 0.9] : hovering ? 1.04 : 1,
                 opacity: clicked ? [1, 1, 0] : 1,
+                backgroundColor: hovering
+                  ? (isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))')
+                  : 'transparent',
               }}
-              transition={{ duration: clicked ? 0.65 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="relative flex items-center gap-3 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-12 py-5 text-sm font-medium uppercase tracking-[0.3em] text-brown-dark shadow-xl"
+              transition={{ duration: clicked ? 0.6 : 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="relative flex items-center gap-3 rounded-full border px-14 py-4 text-xs font-medium uppercase tracking-[0.4em] transition-colors"
+              style={{
+                borderColor: isDark ? 'hsl(var(--gold) / 0.6)' : 'hsl(var(--gold-dark) / 0.6)',
+                color: hovering ? (isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-50))') : (isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))'),
+              }}
             >
-              touch me please
+              Enter
             </motion.span>
           </button>
         </motion.div>
@@ -396,10 +281,10 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={revealed ? { opacity: 1 } : {}}
           transition={{ delay: 2.8, duration: 1 }}
-          className="mt-8 text-[10px] uppercase tracking-[0.4em]"
-          style={{ color: isDark ? 'hsl(var(--cream) / 0.5)' : 'hsl(var(--brown) / 0.5)' }}
+          className="mt-10 text-[9px] uppercase tracking-[0.5em]"
+          style={{ color: isDark ? 'hsl(var(--cream) / 0.4)' : 'hsl(var(--brown) / 0.4)' }}
         >
-          by zaighum mujahid
+          Zaighum Mujahid
         </motion.p>
       </div>
     </section>
