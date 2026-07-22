@@ -128,6 +128,80 @@ export function Hero() {
         ))}
       </div>
 
+      {/* Constellation — a few stars quietly joined by thin lines */}
+      <div className="pointer-events-none absolute left-[8%] top-[60%] hidden md:block">
+        <motion.svg
+          width="140" height="90" viewBox="0 0 140 90"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: revealed ? 1 : 0 }}
+          transition={{ delay: 2, duration: 1.2 }}
+        >
+          <path
+            d="M10 70 L45 20 L80 45 L120 10"
+            fill="none"
+            stroke={isDark ? 'hsl(var(--gold) / 0.25)' : 'hsl(var(--gold-dark) / 0.3)'}
+            strokeWidth="0.5"
+          />
+          {[[10, 70], [45, 20], [80, 45], [120, 10]].map(([cx, cy], i) => (
+            <motion.circle
+              key={i}
+              cx={cx} cy={cy} r="2"
+              fill={isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))'}
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 3, repeat: Infinity, delay: i * 0.5, ease: 'easeInOut' }}
+            />
+          ))}
+        </motion.svg>
+      </div>
+
+      {/* Flowing silk ribbon line drifting slowly across the scene */}
+      <motion.svg
+        className="pointer-events-none absolute inset-0 h-full w-full opacity-40"
+        viewBox="0 0 1000 1000"
+        preserveAspectRatio="none"
+      >
+        <motion.path
+          d="M -100 700 Q 200 600 400 720 T 900 650 T 1300 700"
+          fill="none"
+          stroke={isDark ? 'hsl(var(--gold) / 0.3)' : 'hsl(var(--gold-dark) / 0.25)'}
+          strokeWidth="1"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: revealed ? 1 : 0 }}
+          transition={{ duration: 3, delay: 1, ease: [0.22, 1, 0.36, 1] }}
+        />
+        <motion.path
+          d="M -100 250 Q 250 180 500 260 T 1100 220"
+          fill="none"
+          stroke={isDark ? 'hsl(var(--gold) / 0.2)' : 'hsl(var(--gold-dark) / 0.18)'}
+          strokeWidth="0.75"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: revealed ? 1 : 0 }}
+          transition={{ duration: 3, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
+        />
+      </motion.svg>
+
+      {/* Compass / star motif — bottom left */}
+      <motion.div
+        initial={{ opacity: 0, rotate: -30 }}
+        animate={{ opacity: revealed ? 0.6 : 0, rotate: 0 }}
+        transition={{ delay: 2.2, duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+        className="pointer-events-none absolute bottom-[10%] left-[6%] hidden md:block"
+      >
+        <motion.svg
+          width="46" height="46" viewBox="0 0 46 46"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+        >
+          <path
+            d="M23 2 L27 19 L44 23 L27 27 L23 44 L19 27 L2 23 L19 19 Z"
+            fill="none"
+            stroke={isDark ? 'hsl(var(--gold) / 0.5)' : 'hsl(var(--gold-dark) / 0.5)'}
+            strokeWidth="0.75"
+          />
+          <circle cx="23" cy="23" r="2" fill={isDark ? 'hsl(var(--gold) / 0.6)' : 'hsl(var(--gold-dark) / 0.6)'} />
+        </motion.svg>
+      </motion.div>
+
       {/* Ornamental corner frame — the signature "boutique" touch */}
       <div className="pointer-events-none absolute inset-6 md:inset-10">
         {[
@@ -147,32 +221,32 @@ export function Hero() {
         ))}
       </div>
 
-      {/* Minimal emblem — concentric rings + rotating seal text, replaces literal sun/moon */}
+      {/* Minimal emblem — concentric rings, plain, no text */}
       <motion.div
         style={{ x: sx, y: sy }}
         className="absolute top-[14%] z-[1] md:right-[12%]"
       >
-        {/* Outer ring with circular "seal" text, rotating slowly */}
+        {/* Outer ring — plain, elegant, no text */}
         <motion.svg
           viewBox="0 0 200 200"
           className="h-40 w-40 md:h-56 md:w-56"
           animate={{ rotate: 360 }}
           transition={{ duration: 90, repeat: Infinity, ease: 'linear' }}
         >
-          <defs>
-            <path id="sealCircle" d="M 100,100 m -85,0 a 85,85 0 1,1 170,0 a 85,85 0 1,1 -170,0" />
-          </defs>
           <circle
             cx="100" cy="100" r="85"
             fill="none"
-            stroke={isDark ? 'hsl(var(--gold) / 0.2)' : 'hsl(var(--gold-dark) / 0.25)'}
-            strokeWidth="0.5"
+            stroke={isDark ? 'hsl(var(--gold) / 0.25)' : 'hsl(var(--gold-dark) / 0.3)'}
+            strokeWidth="0.75"
           />
-          <text fontSize="9.5" letterSpacing="4" fill={isDark ? 'hsl(var(--gold) / 0.55)' : 'hsl(var(--gold-dark) / 0.6)'}>
-            <textPath href="#sealCircle" startOffset="0%">
-              LUNAR BLOOM • HANDCRAFTED IN LAHORE • EST. 2019 •
-            </textPath>
-          </text>
+          <circle
+            cx="100" cy="15" r="2.5"
+            fill={isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))'}
+          />
+          <circle
+            cx="100" cy="185" r="1.5"
+            fill={isDark ? 'hsl(var(--gold) / 0.6)' : 'hsl(var(--gold-dark) / 0.6)'}
+          />
         </motion.svg>
 
         {/* Inner ring, rotating opposite direction */}
@@ -233,6 +307,27 @@ export function Hero() {
         animate={revealed ? { clipPath: 'inset(100% 0% 0% 0%)' } : {}}
         transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
       />
+
+      {/* Bottom ornamental border with center diamond mark */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: revealed ? 1 : 0 }}
+        transition={{ delay: 2.5, duration: 1.2 }}
+        className="pointer-events-none absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-3 md:bottom-10"
+      >
+        <div
+          className="h-px w-16 md:w-24"
+          style={{ backgroundColor: isDark ? 'hsl(var(--gold) / 0.3)' : 'hsl(var(--gold-dark) / 0.3)' }}
+        />
+        <div
+          className="h-1.5 w-1.5 rotate-45"
+          style={{ backgroundColor: isDark ? 'hsl(var(--gold) / 0.5)' : 'hsl(var(--gold-dark) / 0.5)' }}
+        />
+        <div
+          className="h-px w-16 md:w-24"
+          style={{ backgroundColor: isDark ? 'hsl(var(--gold) / 0.3)' : 'hsl(var(--gold-dark) / 0.3)' }}
+        />
+      </motion.div>
 
       {/* Content */}
       <div className="relative z-20 flex flex-col items-center px-6 text-center">
