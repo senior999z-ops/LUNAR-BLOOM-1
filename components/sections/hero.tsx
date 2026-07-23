@@ -13,6 +13,8 @@ export function Hero() {
   const [hovering, setHovering] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [moonFull, setMoonFull] = useState(false);
+  const [earthPulse, setEarthPulse] = useState(0);
   const isDark = mounted ? theme === 'dark' : true;
 
   const handleEnter = () => {
@@ -45,6 +47,7 @@ export function Hero() {
   const [nearStars, setNearStars] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number; duration: number }>>([]);
   const [brightStars, setBrightStars] = useState<Array<{ id: number; top: number; left: number; size: number; delay: number }>>([]);
   const [shootingStars, setShootingStars] = useState<Array<{ id: number; top: number; left: number; delay: number }>>([]);
+  const [starBursts, setStarBursts] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     const mobile = window.matchMedia('(max-width: 767px)').matches;
@@ -62,8 +65,8 @@ export function Hero() {
     );
     setBrightStars(
       Array.from({ length: mobile ? 4 : 8 }, (_, i) => ({
-        id: i, top: Math.random() * 90 + 5, left: Math.random() * 90 + 5,
-        size: Math.random() * 4 + 6, delay: Math.random() * 4,
+        id: i, top: Math.random() * 85 + 5, left: Math.random() * 85 + 5,
+        size: Math.random() * 4 + 8, delay: Math.random() * 4,
       }))
     );
     setShootingStars(
@@ -73,6 +76,11 @@ export function Hero() {
       }))
     );
   }, []);
+
+  const handleStarClick = (id: number) => {
+    setStarBursts((prev) => ({ ...prev, [id]: true }));
+    setTimeout(() => setStarBursts((prev) => ({ ...prev, [id]: false })), 700);
+  };
 
   const bgColor = isDark ? 'hsl(var(--brown-dark))' : 'hsl(var(--cream-100))';
   const textColor = isDark ? 'hsl(var(--cream))' : 'hsl(var(--brown-dark))';
@@ -134,18 +142,42 @@ export function Hero() {
         ))}
       </div>
 
-      {/* Bright four-point sparkle stars */}
-      <div className="pointer-events-none absolute inset-0 hidden md:block">
+      {/* Bright four-point sparkle stars — clickable, burst on click */}
+      <div className="absolute inset-0 hidden md:block">
         {brightStars.map((s) => (
-          <motion.svg
+          <div
             key={`bright-${s.id}`}
-            viewBox="0 0 24 24"
-            style={{ position: 'absolute', top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size }}
-            animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.2, 0.7], rotate: [0, 90] }}
-            transition={{ duration: 4, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
+            className="absolute cursor-pointer"
+            style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size + 20, height: s.size + 20 }}
+            onClick={() => handleStarClick(s.id)}
+            data-cursor-label="star"
           >
-            <path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill={isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))'} />
-          </motion.svg>
+            <motion.svg
+              viewBox="0 0 24 24"
+              style={{ width: s.size, height: s.size }}
+              animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.2, 0.7], rotate: [0, 90] }}
+              transition={{ duration: 4, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
+            >
+              <path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill={isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))'} />
+            </motion.svg>
+
+            <AnimatePresence>
+              {starBursts[s.id] && (
+                <>
+                  {[...Array(8)].map((_, i) => (
+                    <motion.span
+                      key={i}
+                      className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-8 origin-left rounded-full"
+                      style={{ backgroundColor: isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))', rotate: (i / 8) * 360 }}
+                      initial={{ width: 0, opacity: 1 }}
+                      animate={{ width: 24, opacity: 0 }}
+                      transition={{ duration: 0.6, ease: 'easeOut' }}
+                    />
+                  ))}
+                </>
+              )}
+            </AnimatePresence>
+          </div>
         ))}
       </div>
 
@@ -165,8 +197,46 @@ export function Hero() {
         </div>
       )}
 
-      {/* Half moon (crescent) — night / radiant sun — day */}
-      <motion.div style={{ x: sx, y: sy }} className="absolute top-[10%] z-[1] md:right-[10%]">
+      {/* Earth — small planet, floating bottom-left, gently rotating */}
+      <motion.div
+        className="absolute bottom-[14%] left-[8%] z-[1] hidden cursor-pointer md:block"
+        onClick={() => setEarthPulse((p) => p + 1)}
+        data-cursor-label="earth"
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: revealed ? 1 : 0, scale: revealed ? 1 : 0 }}
+        transition={{ delay: 2, duration: 1, type: 'spring', stiffness: 100 }}
+      >
+        <motion.div
+          className="relative h-16 w-16 overflow-hidden rounded-full md:h-20 md:w-20"
+          style={{
+            background: 'radial-gradient(circle at 35% 35%, hsl(200 70% 55%), hsl(210 65% 35%) 60%, hsl(220 55% 22%))',
+            boxShadow: '0 0 30px hsl(200 70% 50% / 0.4)',
+          }}
+          animate={{ rotate: 360, scale: earthPulse ? [1, 1.25, 1] : 1 }}
+          transition={{ rotate: { duration: 25, repeat: Infinity, ease: 'linear' }, scale: { duration: 0.5, ease: 'easeOut' } }}
+        >
+          {/* Continents */}
+          <div className="absolute left-[15%] top-[20%] h-3 w-4 rounded-full bg-[hsl(120,35%,40%)] opacity-80" />
+          <div className="absolute left-[50%] top-[45%] h-4 w-5 rounded-full bg-[hsl(120,35%,40%)] opacity-80" />
+          <div className="absolute left-[25%] top-[65%] h-2 w-3 rounded-full bg-[hsl(120,35%,40%)] opacity-70" />
+          {/* Cloud swirls */}
+          <div className="absolute left-[5%] top-[50%] h-2 w-6 rounded-full bg-white opacity-20" />
+          <div className="absolute left-[45%] top-[15%] h-1.5 w-5 rounded-full bg-white opacity-20" />
+        </motion.div>
+        {/* Thin orbit ring */}
+        <div
+          className="pointer-events-none absolute -inset-3 rounded-full border"
+          style={{ borderColor: isDark ? 'hsl(var(--gold) / 0.2)' : 'hsl(var(--gold-dark) / 0.25)' }}
+        />
+      </motion.div>
+
+      {/* Half moon (crescent) — click to reveal full moon */}
+      <motion.div
+        style={{ x: sx, y: sy }}
+        className="absolute top-[10%] z-[1] cursor-pointer md:right-[10%]"
+        onClick={() => setMoonFull((v) => !v)}
+        data-cursor-label={moonFull ? 'shrink' : 'reveal'}
+      >
         {isDark ? (
           <div className="relative h-40 w-40 md:h-52 md:w-52">
             {/* Full glowing moon disc */}
@@ -178,12 +248,28 @@ export function Hero() {
               }}
               animate={{ scale: [1, 1.03, 1] }}
               transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            {/* Shadow overlay carving it into a crescent */}
-            <div
+            >
+              {/* Craters appear once full */}
+              <motion.div
+                animate={{ opacity: moonFull ? 1 : 0 }}
+                transition={{ duration: 0.6, delay: moonFull ? 0.3 : 0 }}
+              >
+                <div className="absolute left-[20%] top-[30%] h-6 w-6 rounded-full bg-brown/10" />
+                <div className="absolute left-[55%] top-[50%] h-8 w-8 rounded-full bg-brown/10" />
+                <div className="absolute left-[35%] top-[68%] h-4 w-4 rounded-full bg-brown/10" />
+              </motion.div>
+            </motion.div>
+            {/* Shadow overlay carving it into a crescent — animates away to reveal full moon */}
+            <motion.div
               className="absolute rounded-full"
+              animate={{
+                width: moonFull ? '0%' : '92%',
+                height: moonFull ? '0%' : '92%',
+                left: moonFull ? '50%' : '26%',
+                top: moonFull ? '50%' : '-6%',
+              }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                width: '92%', height: '92%', top: '-6%', left: '26%',
                 background: bgColor,
                 boxShadow: `0 0 40px 20px ${bgColor}`,
               }}
@@ -203,7 +289,7 @@ export function Hero() {
 
         {/* Soft outer halo */}
         <motion.div
-          className="absolute inset-0 -z-10 rounded-full"
+          className="pointer-events-none absolute inset-0 -z-10 rounded-full"
           animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
           transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
           style={{
@@ -351,7 +437,6 @@ export function Hero() {
           <AnimatePresence>
             {clicked && (
               <>
-                {/* Shockwave ring */}
                 <motion.div
                   className="pointer-events-none absolute left-1/2 top-1/2 rounded-full border-2"
                   style={{ borderColor: isDark ? 'hsl(var(--gold))' : 'hsl(var(--gold-dark))', x: '-50%', y: '-50%' }}
@@ -359,7 +444,6 @@ export function Hero() {
                   animate={{ width: 500, height: 500, opacity: 0 }}
                   transition={{ duration: 0.8, ease: 'easeOut' }}
                 />
-                {/* Radiant rays */}
                 {[...Array(14)].map((_, i) => (
                   <motion.span
                     key={`ray-${i}`}
@@ -373,7 +457,6 @@ export function Hero() {
                     transition={{ duration: 0.7, ease: 'easeOut', delay: i * 0.01 }}
                   />
                 ))}
-                {/* Twinkling sparks scattering outward */}
                 {[...Array(20)].map((_, i) => {
                   const angle = Math.random() * Math.PI * 2;
                   const dist = Math.random() * 140 + 60;
