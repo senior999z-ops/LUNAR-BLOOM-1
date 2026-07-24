@@ -86,7 +86,7 @@ export function Navbar() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1 sm:gap-3 md:gap-4">
             <button
               onClick={() => setSearchOpen((v) => !v)}
               className="rounded-full p-2 text-brown/70 transition-colors hover:text-gold dark:text-cream/70"
@@ -115,7 +115,7 @@ export function Navbar() {
 
             <Link
               href="/shop"
-              className="hidden rounded-full p-2 text-brown/70 transition-colors hover:text-gold dark:text-cream/70 sm:block"
+              className="rounded-full p-2 text-brown/70 transition-colors hover:text-gold dark:text-cream/70"
               aria-label="Wishlist"
             >
               <div className="relative">
