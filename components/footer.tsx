@@ -86,7 +86,7 @@ export function Footer() {
                 setEmail('');
               }
             }}
-            className="mx-auto mt-6 flex max-w-md items-center gap-2"
+            className="mx-auto mt-6 flex max-w-md flex-col items-stretch gap-3 px-4 sm:flex-row sm:items-center sm:gap-2 sm:px-0"
           >
             <input
               type="email"
@@ -94,13 +94,13 @@ export function Footer() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Your email address"
-              className="flex-1 rounded-full border border-cream/20 bg-cream/5 px-6 py-3 text-sm text-cream outline-none placeholder:text-cream/40 focus:border-gold focus:ring-1 focus:ring-gold/30"
+              className="min-w-0 flex-1 rounded-full border border-cream/20 bg-cream/5 px-6 py-3 text-sm text-cream outline-none placeholder:text-cream/40 focus:border-gold focus:ring-1 focus:ring-gold/30"
             />
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               type="submit"
-              className="rounded-full bg-gradient-to-r from-gold-dark to-gold px-8 py-3 text-sm font-medium text-brown-dark transition-shadow hover:glow-gold"
+              className="shrink-0 rounded-full bg-gradient-to-r from-gold-dark to-gold px-8 py-3 text-sm font-medium text-brown-dark transition-shadow hover:glow-gold"
             >
               {subscribed ? 'Shukriya!' : 'Subscribe'}
             </motion.button>
