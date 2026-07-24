@@ -23,7 +23,7 @@ export function FloatingBackButton() {
       whileTap={{ scale: 0.9 }}
       onClick={() => router.back()}
       data-cursor-label="back"
-      className="fixed left-4 top-24 z-[120] flex items-center gap-2 rounded-full glass-strong px-5 py-3 text-xs font-medium uppercase tracking-[0.2em] text-brown shadow-lg dark:text-cream lg:left-6 lg:top-6"
+      className="fixed left-4 top-28 z-[120] flex items-center gap-2 rounded-full glass-strong px-5 py-3 text-xs font-medium uppercase tracking-[0.2em] text-brown shadow-lg dark:text-cream lg:left-6 lg:top-6"
     >
       <ArrowLeft className="h-4 w-4" />
     </motion.button>
