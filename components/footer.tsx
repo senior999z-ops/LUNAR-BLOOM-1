@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Instagram, Mail, Twitter, Youtube } from 'lucide-react';
+import { Instagram, Mail, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
@@ -150,8 +150,7 @@ export function Footer() {
           <div className="flex items-center gap-4">
             {[
               { icon: Instagram, href: '#' },
-              { icon: Twitter, href: '#' },
-              { icon: Youtube, href: '#' },
+              { icon: MessageCircle, href: 'https://wa.me/0000000000' },
               { icon: Mail, href: '/contact' },
             ].map((s, i) => (
               <motion.a
