@@ -37,8 +37,7 @@ export function FloatingButton({
   // of 4 safe corners, far from that center band, so they can never drift
   // onto a collection image regardless of screen size. Right-side corners
   // are anchored from the right edge (not left), so a long label like
-  // "FAVOURITES" grows inward instead of overflowing off-screen. Left/right
-  // pairs are staggered vertically so they never collide with each other.
+  // "FAVOURITES" grows inward instead of overflowing off-screen.
   const NAV_CORNERS = [
     { side: 'left' as const, offset: 18, y: 14 },
     { side: 'right' as const, offset: 14, y: 24 },
@@ -55,10 +54,10 @@ export function FloatingButton({
     horizontalStyle = corner.side === 'left' ? { left: `${corner.offset}%` } : { right: `${corner.offset}%` };
   } else {
     const angle = (index / total) * Math.PI * 2 + angleOffset;
-    const radius = 0.28;
+    const radius = 0.4;
     const rawX = 50 + Math.cos(angle) * radius * 50;
     const rawY = 50 + Math.sin(angle) * radius * 50;
-    const startX = Math.min(82, Math.max(18, rawX));
+    const startX = Math.min(85, Math.max(15, rawX));
     startY = Math.min(80, Math.max(20, rawY));
     horizontalStyle = { left: `${startX}%` };
   }
@@ -88,8 +87,8 @@ export function FloatingButton({
     const phase = index * 1.3;
     const speedX = variant === 'collection' ? 0.0003 : 0.0004;
     const speedY = variant === 'collection' ? 0.0004 : 0.0003;
-    const ampX = variant === 'collection' ? 60 : 25;
-    const ampY = variant === 'collection' ? 50 : 20;
+    const ampX = variant === 'collection' ? 22 : 25;
+    const ampY = variant === 'collection' ? 18 : 20;
 
     const animate = () => {
       frame++;
