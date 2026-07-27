@@ -37,12 +37,13 @@ export function FloatingButton({
   // of 4 safe corners, far from that center band, so they can never drift
   // onto a collection image regardless of screen size. Right-side corners
   // are anchored from the right edge (not left), so a long label like
-  // "FAVOURITES" grows inward instead of overflowing off-screen.
+  // "FAVOURITES" grows inward instead of overflowing off-screen. Left/right
+  // pairs are staggered vertically so they never collide with each other.
   const NAV_CORNERS = [
-    { side: 'left' as const, offset: 18, y: 16 },
-    { side: 'right' as const, offset: 14, y: 16 },
-    { side: 'left' as const, offset: 18, y: 84 },
-    { side: 'right' as const, offset: 14, y: 84 },
+    { side: 'left' as const, offset: 18, y: 14 },
+    { side: 'right' as const, offset: 14, y: 24 },
+    { side: 'left' as const, offset: 18, y: 76 },
+    { side: 'right' as const, offset: 14, y: 88 },
   ];
 
   let startY: number;
