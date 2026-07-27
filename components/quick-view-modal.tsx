@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { Heart, ShoppingBag, Star, X } from 'lucide-react';
+import { Heart, ShoppingBag, X } from 'lucide-react';
 import { useCart, useWishlist } from '@/components/providers';
 import type { Product } from '@/lib/products';
 import { formatPKR } from '@/lib/products';
@@ -55,24 +55,6 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
               <h2 className="mt-2 font-serif text-3xl text-brown dark:text-cream">
                 {product.name}
               </h2>
-              <div className="mt-2 flex items-center gap-2">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={cn(
-                        'h-4 w-4',
-                        i < Math.floor(product.rating)
-                          ? 'fill-gold text-gold'
-                          : 'text-brown/20 dark:text-cream/20'
-                      )}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-brown/60 dark:text-cream/60">
-                  {product.rating} ({product.reviews} reviews)
-                </span>
-              </div>
 
               <p className="mt-4 text-sm leading-relaxed text-brown/70 dark:text-cream/70">
                 {product.description}

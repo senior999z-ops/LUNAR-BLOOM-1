@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Check, Heart, Minus, Plus, ShoppingBag, Star } from 'lucide-react';
+import { Check, Heart, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { notFound, useParams } from 'next/navigation';
 import { useState } from 'react';
 import { useCart, useWishlist } from '@/components/providers';
@@ -79,25 +79,6 @@ export default function ProductDetailPage() {
               <h1 className="mt-2 font-serif text-5xl font-light text-brown dark:text-cream">
                 {product.name}
               </h1>
-
-              <div className="mt-3 flex items-center gap-3">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={cn(
-                        'h-4 w-4',
-                        i < Math.floor(product.rating)
-                          ? 'fill-gold text-gold'
-                          : 'text-brown/20 dark:text-cream/20'
-                      )}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-brown/60 dark:text-cream/60">
-                  {product.rating} ({product.reviews} reviews)
-                </span>
-              </div>
 
               <p className="mt-6 text-base leading-relaxed text-brown/70 dark:text-cream/70">
                 {product.description}
