@@ -32,10 +32,9 @@ export function FloatingButton({
   const [mounted, setMounted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Random starting position. Nav buttons snap to one of 4 safe corners.
-  // Right-side corners are anchored from the right edge (not left), so a
-  // long label like "FAVOURITES" grows inward instead of overflowing
-  // off-screen.
+  // Nav buttons snap to one of 4 safe corners. Right-side corners are
+  // anchored from the right edge (not left), so a long label like
+  // "FAVOURITES" grows inward instead of overflowing off-screen.
   const NAV_CORNERS = [
     { side: 'left' as const, offset: 18, y: 18 },
     { side: 'right' as const, offset: 14, y: 27 },
@@ -51,12 +50,12 @@ export function FloatingButton({
     startY = corner.y;
     horizontalStyle = corner.side === 'left' ? { left: `${corner.offset}%` } : { right: `${corner.offset}%` };
   } else {
-    // Two collection circles arranged in a clean, symmetric diagonal —
-    // one anchored from the left edge, one from the right, so neither
-    // can ever be clipped off-screen regardless of circle size.
+    // Both collection circles centered horizontally, stacked one above
+    // the other in the middle of the screen — nav buttons stay around
+    // them at the 4 corners.
     const isFirst = index % 2 === 0;
-    startY = isFirst ? 42 : 62;
-    horizontalStyle = isFirst ? { left: '10%' } : { right: '8%' };
+    startY = isFirst ? 36 : 62;
+    horizontalStyle = { left: '50%' };
   }
 
   // Floating motion
@@ -80,9 +79,8 @@ export function FloatingButton({
     setMounted(true);
 
     // Gentle floating animation with unique phase per button. Only updates
-    // every other frame — this was running full-speed on every single
-    // button (6 of them) simultaneously, which was the main cause of the
-    // "ruk ruk ke" stutter on mobile.
+    // every other frame — running full-speed on all 6 buttons at once was
+    // the main cause of the mobile stutter.
     let frame = 0;
     const phase = index * 1.3;
     const speedX = variant === 'collection' ? 0.0003 : 0.0004;
@@ -160,20 +158,24 @@ export function FloatingButton({
     );
   }
 
+  const isCentered = variant !== 'nav';
+
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, scale: 0 }}
-      animate={mounted ? { opacity: 1, scale: 1 } : {}}
-      transition={{ delay: 0.5 + index * 0.15, type: 'spring', stiffness: 150 }}
+    <div
       style={{
-        ...horizontalStyle,
+        left: horizontalStyle.left,
+        right: horizontalStyle.right,
         top: `${startY}%`,
-        x: sx,
-        y: sy,
       }}
-      className="absolute z-20"
+      className={cn('absolute z-20', isCentered && '-translate-x-1/2')}
     >
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, scale: 0 }}
+        animate={mounted ? { opacity: 1, scale: 1 } : {}}
+        transition={{ delay: 0.5 + index * 0.15, type: 'spring', stiffness: 150 }}
+        style={{ x: sx, y: sy }}
+      >
       <motion.div style={{ x: px, y: py, rotate }}>
         <motion.button
           onClick={handleClick}
@@ -264,6 +266,7 @@ export function FloatingButton({
           </motion.span>
         </motion.button>
       </motion.div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
