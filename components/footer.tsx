@@ -150,9 +150,9 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-4">
             {[
-              { icon: Instagram, href: '#' },
-              { icon: MessageCircle, href: 'https://wa.me/0000000000' },
-              { icon: Mail, href: '/contact' },
+              { icon: Instagram, href: 'https://instagram.com/lunarbloom.pk' },
+              { icon: MessageCircle, href: 'https://wa.me/923279198527' },
+              { icon: Mail, href: 'mailto:support.lunarbloom.pk@gmail.com' },
             ].map((s, i) => (
               <motion.a
                 key={i}

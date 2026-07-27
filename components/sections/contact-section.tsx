@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { Instagram, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { useState } from 'react';
 
 export function ContactSection() {
@@ -34,9 +34,10 @@ export function ContactSection() {
             className="space-y-6"
           >
             {[
-              { icon: MapPin, value: 'Gulberg III, Lahore' },
-              { icon: Mail, value: 'hello@lunarbloom.pk' },
-              { icon: Phone, value: '+92 300 1234567' },
+              { icon: MapPin, value: 'Lahore, Pakistan' },
+              { icon: Mail, value: 'support.lunarbloom.pk@gmail.com' },
+              { icon: Phone, value: '+92 327 9198527' },
+              { icon: Instagram, value: '@lunarbloom.pk' },
             ].map((item, i) => (
               <motion.div
                 key={i}
