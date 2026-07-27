@@ -50,11 +50,11 @@ export function FloatingButton({
     startY = corner.y;
     horizontalStyle = corner.side === 'left' ? { left: `${corner.offset}%` } : { right: `${corner.offset}%` };
   } else {
-    // Both collection circles sit at the same height, side by side —
-    // one anchored from the left edge, one from the right — so neither
-    // can ever be clipped off-screen regardless of circle size.
+    // Both collection circles sit side by side — one anchored from the
+    // left edge, one from the right — so neither can ever be clipped
+    // off-screen. Stitched (left) sits a touch higher than Unstitched.
     const isFirst = index % 2 === 0;
-    startY = 50;
+    startY = isFirst ? 38 : 50;
     horizontalStyle = isFirst ? { left: '8%' } : { right: '8%' };
   }
 
