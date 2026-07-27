@@ -111,9 +111,9 @@ export default function CollectionsPage() {
         transition={{ delay: 0.3, duration: 1 }}
         className="absolute left-1/2 top-8 z-10 -translate-x-1/2 text-center"
       >
-        <p className="font-script text-2xl text-gold">discover</p>
-        <h1 className="font-serif text-3xl font-light tracking-[0.1em] text-brown dark:text-cream md:text-4xl">
-          <span className="text-gradient-gold">collections</span>
+        <p className="font-serif text-sm uppercase tracking-[0.5em] text-gold sm:text-base">DISCOVER</p>
+        <h1 className="mt-1 font-serif text-4xl font-light uppercase tracking-[0.12em] text-brown dark:text-cream sm:text-5xl md:text-6xl">
+          <span className="text-gradient-gold">COLLECTIONS</span>
         </h1>
       </motion.div>
 
