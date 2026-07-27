@@ -153,7 +153,8 @@ export function Providers({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isHome = pathname === '/';
   const isCollections = pathname === '/collections';
-  const hideChrome = isHome || isCollections;
+  const isWishlist = pathname === '/wishlist';
+  const hideChrome = isHome || isCollections || isWishlist;
 
   useEffect(() => {
     if (sessionStorage.getItem('lb_loaded')) return;
