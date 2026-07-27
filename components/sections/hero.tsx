@@ -52,25 +52,25 @@ export function Hero() {
   useEffect(() => {
     const mobile = window.matchMedia('(max-width: 767px)').matches;
     setFarStars(
-      Array.from({ length: mobile ? 45 : 100 }, (_, i) => ({
+      Array.from({ length: mobile ? 25 : 100 }, (_, i) => ({
         id: i, top: Math.random() * 100, left: Math.random() * 100,
         size: Math.random() * 1.2 + 0.5, delay: Math.random() * 5, duration: Math.random() * 4 + 3,
       }))
     );
     setNearStars(
-      Array.from({ length: mobile ? 20 : 45 }, (_, i) => ({
+      Array.from({ length: mobile ? 12 : 45 }, (_, i) => ({
         id: i, top: Math.random() * 100, left: Math.random() * 100,
         size: Math.random() * 2 + 1.2, delay: Math.random() * 5, duration: Math.random() * 3 + 2,
       }))
     );
     setBrightStars(
-      Array.from({ length: mobile ? 4 : 8 }, (_, i) => ({
+      Array.from({ length: mobile ? 3 : 8 }, (_, i) => ({
         id: i, top: Math.random() * 85 + 5, left: Math.random() * 85 + 5,
         size: Math.random() * 4 + 8, delay: Math.random() * 4,
       }))
     );
     setShootingStars(
-      Array.from({ length: mobile ? 2 : 4 }, (_, i) => ({
+      Array.from({ length: mobile ? 1 : 4 }, (_, i) => ({
         id: i, top: Math.random() * 40, left: Math.random() * 60,
         delay: i * 5 + Math.random() * 3,
       }))

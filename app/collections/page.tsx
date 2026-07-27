@@ -19,10 +19,13 @@ const NAV_BUTTONS = [
 
 export default function CollectionsPage() {
   const [stars, setStars] = useState<Array<{ id: number; top: number; left: number; delay: number; duration: number }>>([]);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const mobile = window.matchMedia('(max-width: 767px)').matches;
+    setIsMobile(mobile);
     setStars(
-      Array.from({ length: 40 }, (_, i) => ({
+      Array.from({ length: mobile ? 12 : 40 }, (_, i) => ({
         id: i,
         top: Math.random() * 100,
         left: Math.random() * 100,
@@ -32,36 +35,53 @@ export default function CollectionsPage() {
     );
   }, []);
 
+  const orbCount = isMobile ? 2 : 5;
+
   return (
     <main className="relative z-10 h-screen overflow-hidden">
       {/* Ambient background */}
       <div className="absolute inset-0">
-        {/* Floating golden orbs */}
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: 200 + i * 80,
-              height: 200 + i * 80,
-              top: `${15 + i * 15}%`,
-              left: `${10 + i * 18}%`,
-              background: 'radial-gradient(circle, hsl(var(--gold) / 0.08), transparent 70%)',
-              filter: 'blur(40px)',
-            }}
-            animate={{
-              x: [0, 50, 0],
-              y: [0, -30, 0],
-              opacity: [0.3, 0.6, 0.3],
-            }}
-            transition={{
-              duration: 10 + i * 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: i * 0.5,
-            }}
-          />
-        ))}
+        {/* Floating golden orbs — static (no blur animation) on mobile */}
+        {[...Array(orbCount)].map((_, i) =>
+          isMobile ? (
+            <div
+              key={i}
+              className="absolute rounded-full opacity-30"
+              style={{
+                width: 200 + i * 80,
+                height: 200 + i * 80,
+                top: `${15 + i * 15}%`,
+                left: `${10 + i * 18}%`,
+                background: 'radial-gradient(circle, hsl(var(--gold) / 0.08), transparent 70%)',
+                filter: 'blur(20px)',
+              }}
+            />
+          ) : (
+            <motion.div
+              key={i}
+              className="absolute rounded-full"
+              style={{
+                width: 200 + i * 80,
+                height: 200 + i * 80,
+                top: `${15 + i * 15}%`,
+                left: `${10 + i * 18}%`,
+                background: 'radial-gradient(circle, hsl(var(--gold) / 0.08), transparent 70%)',
+                filter: 'blur(40px)',
+              }}
+              animate={{
+                x: [0, 50, 0],
+                y: [0, -30, 0],
+                opacity: [0.3, 0.6, 0.3],
+              }}
+              transition={{
+                duration: 10 + i * 2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: i * 0.5,
+              }}
+            />
+          )
+        )}
 
         {/* Twinkling stars */}
         {stars.map((s) => (

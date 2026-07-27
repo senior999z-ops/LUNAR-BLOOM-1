@@ -32,8 +32,9 @@ export function Footer() {
   const [stars, setStars] = useState<Array<{ id: number; top: number; left: number; delay: number; duration: number }>>([]);
 
   useEffect(() => {
+    const mobile = window.matchMedia('(max-width: 767px)').matches;
     setStars(
-      Array.from({ length: 30 }, (_, i) => ({
+      Array.from({ length: mobile ? 10 : 30 }, (_, i) => ({
         id: i,
         top: Math.random() * 100,
         left: Math.random() * 100,
