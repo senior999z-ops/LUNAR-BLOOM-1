@@ -32,16 +32,32 @@ export function FloatingButton({
   const [mounted, setMounted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Random starting position — clamped within safe bounds so buttons never
-  // clip off the edge of narrow mobile screens (this was cutting off the
-  // "FAVOURITE" label before).
-  const angle = (index / total) * Math.PI * 2 + angleOffset;
-  const radius = variant === 'collection' ? 0.28 : 0.42;
+  // Random starting position. Collection circles use angle-based placement
+  // (they sit in the vertical-center band). Nav buttons instead snap to one
+  // of 4 safe corners, far from that center band, so they can never drift
+  // onto a collection image regardless of screen size.
+  const NAV_CORNERS = [
+    { x: 22, y: 16 },
+    { x: 78, y: 16 },
+    { x: 22, y: 84 },
+    { x: 78, y: 84 },
+  ];
 
-  const rawX = 50 + Math.cos(angle) * radius * 50;
-  const rawY = 50 + Math.sin(angle) * radius * 50;
-  const startX = Math.min(82, Math.max(18, rawX));
-  const startY = Math.min(80, Math.max(14, rawY));
+  let startX: number;
+  let startY: number;
+
+  if (variant === 'nav') {
+    const corner = NAV_CORNERS[index % NAV_CORNERS.length];
+    startX = corner.x;
+    startY = corner.y;
+  } else {
+    const angle = (index / total) * Math.PI * 2 + angleOffset;
+    const radius = 0.28;
+    const rawX = 50 + Math.cos(angle) * radius * 50;
+    const rawY = 50 + Math.sin(angle) * radius * 50;
+    startX = Math.min(82, Math.max(18, rawX));
+    startY = Math.min(80, Math.max(20, rawY));
+  }
 
   // Floating motion
   const x = useMotionValue(0);
@@ -68,8 +84,8 @@ export function FloatingButton({
     const phase = index * 1.3;
     const speedX = variant === 'collection' ? 0.0003 : 0.0004;
     const speedY = variant === 'collection' ? 0.0004 : 0.0003;
-    const ampX = variant === 'collection' ? 60 : 40;
-    const ampY = variant === 'collection' ? 50 : 35;
+    const ampX = variant === 'collection' ? 60 : 25;
+    const ampY = variant === 'collection' ? 50 : 20;
 
     const animate = () => {
       frame++;
