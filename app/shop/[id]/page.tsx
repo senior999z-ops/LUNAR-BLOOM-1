@@ -16,8 +16,7 @@ export default function ProductDetailPage() {
   const product = getProduct(id);
 
   // All hooks must run before any early return — React requires the same
-  // hook order on every render. Calling notFound() above these caused the
-  // hook order to change between renders.
+  // hook order on every render.
   const { addItem } = useCart();
   const { toggle, has } = useWishlist();
   const [quantity, setQuantity] = useState(1);
@@ -44,8 +43,12 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <main className="relative z-10 min-h-screen pt-32">
+    // Extra top clearance on small screens — the announcement bar + navbar
+    // stack is a little taller there than pt-32 alone accounted for, which
+    // was letting the fixed header sit over the product image.
+    <main className="relative z-10 min-h-screen pt-44 sm:pt-36 lg:pt-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        {/* Breadcrumb */}
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           {/* Image with zoom */}
           <Reveal direction="left">
