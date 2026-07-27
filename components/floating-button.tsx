@@ -158,8 +158,6 @@ export function FloatingButton({
     );
   }
 
-  const isCentered = variant !== 'nav';
-
   return (
     <div
       style={{
@@ -167,7 +165,7 @@ export function FloatingButton({
         right: horizontalStyle.right,
         top: `${startY}%`,
       }}
-      className={cn('absolute z-20', isCentered && '-translate-x-1/2')}
+      className="absolute z-20 -translate-x-1/2"
     >
       <motion.div
         ref={ref}
