@@ -3,9 +3,11 @@
 import { motion } from 'framer-motion';
 import { Instagram, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export function ContactSection() {
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
 
   return (
@@ -60,9 +62,18 @@ export function ContactSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
+              const form = e.target as HTMLFormElement;
+              const name = (form.elements.namedItem('name') as HTMLInputElement).value;
+              const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+              const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value;
+
+              setSending(true);
+              await supabase.from('contact_messages').insert({ name, email, message });
+              setSending(false);
               setSent(true);
+              form.reset();
               setTimeout(() => setSent(false), 3000);
             }}
             className="space-y-4"
@@ -74,6 +85,7 @@ export function ContactSection() {
               <div key={field.name} className="relative">
                 <input
                   type={field.type}
+                  name={field.name}
                   required
                   onFocus={() => setFocused(field.name)}
                   onBlur={() => setFocused(null)}
@@ -97,6 +109,7 @@ export function ContactSection() {
             <div className="relative">
               <textarea
                 required
+                name="message"
                 rows={3}
                 onFocus={() => setFocused('message')}
                 onBlur={() => setFocused(null)}
