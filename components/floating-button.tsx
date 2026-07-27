@@ -32,12 +32,10 @@ export function FloatingButton({
   const [mounted, setMounted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Random starting position. Collection circles use angle-based placement
-  // (they sit in the vertical-center band). Nav buttons instead snap to one
-  // of 4 safe corners, far from that center band, so they can never drift
-  // onto a collection image regardless of screen size. Right-side corners
-  // are anchored from the right edge (not left), so a long label like
-  // "FAVOURITES" grows inward instead of overflowing off-screen.
+  // Random starting position. Nav buttons snap to one of 4 safe corners.
+  // Right-side corners are anchored from the right edge (not left), so a
+  // long label like "FAVOURITES" grows inward instead of overflowing
+  // off-screen.
   const NAV_CORNERS = [
     { side: 'left' as const, offset: 18, y: 18 },
     { side: 'right' as const, offset: 14, y: 27 },
@@ -53,13 +51,12 @@ export function FloatingButton({
     startY = corner.y;
     horizontalStyle = corner.side === 'left' ? { left: `${corner.offset}%` } : { right: `${corner.offset}%` };
   } else {
-    const angle = (index / total) * Math.PI * 2 + angleOffset;
-    const radius = 0.46;
-    const rawX = 50 + Math.cos(angle) * radius * 50;
-    const rawY = 50 + Math.sin(angle) * radius * 50;
-    const startX = Math.min(88, Math.max(12, rawX));
-    startY = Math.min(78, Math.max(22, rawY));
-    horizontalStyle = { left: `${startX}%` };
+    // Two collection circles arranged in a clean, symmetric diagonal —
+    // one anchored from the left edge, one from the right, so neither
+    // can ever be clipped off-screen regardless of circle size.
+    const isFirst = index % 2 === 0;
+    startY = isFirst ? 42 : 62;
+    horizontalStyle = isFirst ? { left: '10%' } : { right: '8%' };
   }
 
   // Floating motion
