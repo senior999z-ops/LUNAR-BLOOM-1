@@ -35,28 +35,31 @@ export function FloatingButton({
   // Random starting position. Collection circles use angle-based placement
   // (they sit in the vertical-center band). Nav buttons instead snap to one
   // of 4 safe corners, far from that center band, so they can never drift
-  // onto a collection image regardless of screen size.
+  // onto a collection image regardless of screen size. Right-side corners
+  // are anchored from the right edge (not left), so a long label like
+  // "FAVOURITES" grows inward instead of overflowing off-screen.
   const NAV_CORNERS = [
-    { x: 22, y: 16 },
-    { x: 78, y: 16 },
-    { x: 22, y: 84 },
-    { x: 78, y: 84 },
+    { side: 'left' as const, offset: 18, y: 16 },
+    { side: 'right' as const, offset: 14, y: 16 },
+    { side: 'left' as const, offset: 18, y: 84 },
+    { side: 'right' as const, offset: 14, y: 84 },
   ];
 
-  let startX: number;
   let startY: number;
+  let horizontalStyle: { left?: string; right?: string };
 
   if (variant === 'nav') {
     const corner = NAV_CORNERS[index % NAV_CORNERS.length];
-    startX = corner.x;
     startY = corner.y;
+    horizontalStyle = corner.side === 'left' ? { left: `${corner.offset}%` } : { right: `${corner.offset}%` };
   } else {
     const angle = (index / total) * Math.PI * 2 + angleOffset;
     const radius = 0.28;
     const rawX = 50 + Math.cos(angle) * radius * 50;
     const rawY = 50 + Math.sin(angle) * radius * 50;
-    startX = Math.min(82, Math.max(18, rawX));
+    const startX = Math.min(82, Math.max(18, rawX));
     startY = Math.min(80, Math.max(20, rawY));
+    horizontalStyle = { left: `${startX}%` };
   }
 
   // Floating motion
@@ -120,7 +123,7 @@ export function FloatingButton({
         animate={mounted ? { opacity: 1, scale: 1 } : {}}
         transition={{ delay: 0.3 + index * 0.1, type: 'spring', stiffness: 200 }}
         style={{
-          left: `${startX}%`,
+          ...horizontalStyle,
           top: `${startY}%`,
           x: sx,
           y: sy,
@@ -162,7 +165,7 @@ export function FloatingButton({
       animate={mounted ? { opacity: 1, scale: 1 } : {}}
       transition={{ delay: 0.5 + index * 0.15, type: 'spring', stiffness: 150 }}
       style={{
-        left: `${startX}%`,
+        ...horizontalStyle,
         top: `${startY}%`,
         x: sx,
         y: sy,
