@@ -39,10 +39,10 @@ export function FloatingButton({
   // are anchored from the right edge (not left), so a long label like
   // "FAVOURITES" grows inward instead of overflowing off-screen.
   const NAV_CORNERS = [
-    { side: 'left' as const, offset: 18, y: 14 },
-    { side: 'right' as const, offset: 14, y: 24 },
-    { side: 'left' as const, offset: 18, y: 76 },
-    { side: 'right' as const, offset: 14, y: 88 },
+    { side: 'left' as const, offset: 18, y: 18 },
+    { side: 'right' as const, offset: 14, y: 27 },
+    { side: 'left' as const, offset: 18, y: 72 },
+    { side: 'right' as const, offset: 14, y: 82 },
   ];
 
   let startY: number;
@@ -54,11 +54,11 @@ export function FloatingButton({
     horizontalStyle = corner.side === 'left' ? { left: `${corner.offset}%` } : { right: `${corner.offset}%` };
   } else {
     const angle = (index / total) * Math.PI * 2 + angleOffset;
-    const radius = 0.4;
+    const radius = 0.46;
     const rawX = 50 + Math.cos(angle) * radius * 50;
     const rawY = 50 + Math.sin(angle) * radius * 50;
-    const startX = Math.min(85, Math.max(15, rawX));
-    startY = Math.min(80, Math.max(20, rawY));
+    const startX = Math.min(88, Math.max(12, rawX));
+    startY = Math.min(78, Math.max(22, rawY));
     horizontalStyle = { left: `${startX}%` };
   }
 
@@ -82,7 +82,10 @@ export function FloatingButton({
   useEffect(() => {
     setMounted(true);
 
-    // Gentle floating animation with unique phase per button
+    // Gentle floating animation with unique phase per button. Only updates
+    // every other frame — this was running full-speed on every single
+    // button (6 of them) simultaneously, which was the main cause of the
+    // "ruk ruk ke" stutter on mobile.
     let frame = 0;
     const phase = index * 1.3;
     const speedX = variant === 'collection' ? 0.0003 : 0.0004;
@@ -92,8 +95,10 @@ export function FloatingButton({
 
     const animate = () => {
       frame++;
-      x.set(Math.sin(frame * speedX + phase) * ampX);
-      y.set(Math.cos(frame * speedY + phase * 1.7) * ampY);
+      if (frame % 2 === 0) {
+        x.set(Math.sin(frame * speedX + phase) * ampX);
+        y.set(Math.cos(frame * speedY + phase * 1.7) * ampY);
+      }
       requestAnimationFrame(animate);
     };
     const raf = requestAnimationFrame(animate);
