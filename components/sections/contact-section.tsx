@@ -70,11 +70,28 @@ export function ContactSection() {
               const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value;
 
               setSending(true);
-              await supabase.from('contact_messages').insert({ name, email, message });
-              setSending(false);
-              setSent(true);
-              form.reset();
-              setTimeout(() => setSent(false), 3000);
+              try {
+                const results = await Promise.allSettled([
+                  supabase.from('contact_messages').insert({ name, email, message }),
+                  fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, message }),
+                  }),
+                ]);
+                // Log any failures to the console for debugging, but don't
+                // let one failing (e.g. Supabase being unreachable) stop
+                // the other from completing — this was blocking the email
+                // from ever being sent before.
+                results.forEach((r) => {
+                  if (r.status === 'rejected') console.error('Contact submit error:', r.reason);
+                });
+              } finally {
+                setSending(false);
+                setSent(true);
+                form.reset();
+                setTimeout(() => setSent(false), 3000);
+              }
             }}
             className="space-y-4"
           >
