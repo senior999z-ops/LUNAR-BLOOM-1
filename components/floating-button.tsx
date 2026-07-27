@@ -32,12 +32,16 @@ export function FloatingButton({
   const [mounted, setMounted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Random starting position
+  // Random starting position — clamped within safe bounds so buttons never
+  // clip off the edge of narrow mobile screens (this was cutting off the
+  // "FAVOURITE" label before).
   const angle = (index / total) * Math.PI * 2 + angleOffset;
-  const radius = variant === 'collection' ? 0.3 : 0.46;
+  const radius = variant === 'collection' ? 0.28 : 0.42;
 
-  const startX = 50 + Math.cos(angle) * radius * 50;
-  const startY = 50 + Math.sin(angle) * radius * 50;
+  const rawX = 50 + Math.cos(angle) * radius * 50;
+  const rawY = 50 + Math.sin(angle) * radius * 50;
+  const startX = Math.min(82, Math.max(18, rawX));
+  const startY = Math.min(80, Math.max(14, rawY));
 
   // Floating motion
   const x = useMotionValue(0);

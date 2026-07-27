@@ -121,7 +121,7 @@ export default function CollectionsPage() {
           variant="nav"
           index={i}
           total={NAV_BUTTONS.length}
-          angleOffset={Math.PI / COLLECTIONS.length}
+          angleOffset={Math.PI / 4}
         />
       ))}
 
