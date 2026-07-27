@@ -20,7 +20,7 @@ export function Hero() {
   const handleEnter = () => {
     if (clicked) return;
     setClicked(true);
-    setTimeout(() => router.push('/collections'), 750);
+    router.push('/collections');
   };
 
   const mx = useMotionValue(0);
