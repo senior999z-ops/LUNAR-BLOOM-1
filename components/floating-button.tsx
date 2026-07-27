@@ -50,12 +50,12 @@ export function FloatingButton({
     startY = corner.y;
     horizontalStyle = corner.side === 'left' ? { left: `${corner.offset}%` } : { right: `${corner.offset}%` };
   } else {
-    // Both collection circles centered horizontally, stacked one above
-    // the other in the middle of the screen — nav buttons stay around
-    // them at the 4 corners.
+    // Both collection circles sit at the same height, side by side —
+    // one anchored from the left edge, one from the right — so neither
+    // can ever be clipped off-screen regardless of circle size.
     const isFirst = index % 2 === 0;
-    startY = isFirst ? 36 : 62;
-    horizontalStyle = { left: '50%' };
+    startY = 50;
+    horizontalStyle = isFirst ? { left: '8%' } : { right: '8%' };
   }
 
   // Floating motion
@@ -165,7 +165,7 @@ export function FloatingButton({
         right: horizontalStyle.right,
         top: `${startY}%`,
       }}
-      className="absolute z-20 -translate-x-1/2"
+      className="absolute z-20"
     >
       <motion.div
         ref={ref}
