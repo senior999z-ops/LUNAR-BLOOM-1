@@ -33,6 +33,16 @@ export const products: Product[] = [
   },
 ];
 
+export const collections = [
+  {
+    id: 'unstitched-edit',
+    name: 'Unstitched Edit',
+    description: 'Choose your own silhouette — tailored to your measurements.',
+    image: '/products/lb01.png',
+    productIds: ['lb01-rose-mist'],
+  },
+];
+
 export function getProduct(id: string) {
   return products.find((p) => p.id === id);
 }
