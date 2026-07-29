@@ -1,18 +1,21 @@
 ﻿'use client';
 
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Package, Scissors, Shirt } from 'lucide-react';
 import { Suspense, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FloatingBackButton } from '@/components/floating-back-button';
+import { ProductCard } from '@/components/product-card';
+import { QuickViewModal } from '@/components/quick-view-modal';
 import { Reveal, TextReveal } from '@/components/reveal';
-import { products, formatPKR } from '@/lib/products';
+import { products, type Product } from '@/lib/products';
 import { cn } from '@/lib/utils';
 
 function ShopPageContent() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') === 'stitched' ? 'stitched' : 'unstitched';
   const [tab, setTab] = useState<'stitched' | 'unstitched'>(initialTab);
+  const [quickView, setQuickView] = useState<Product | null>(null);
 
   const filtered = useMemo(() => products.filter((p) => p.type === tab), [tab]);
 
@@ -27,8 +30,15 @@ function ShopPageContent() {
           <h1 className="mt-2 font-serif text-5xl font-light text-brown dark:text-cream md:text-7xl">
             <TextReveal text="Shop All" />
           </h1>
+          <Reveal delay={0.2}>
+            <p className="mx-auto mt-4 max-w-xl text-sm text-brown/60 dark:text-cream/60">
+              Discover the full LUNAR BLOOM collection. Heritage embroidery, pure
+              fabrics, handcrafted in Pakistan.
+            </p>
+          </Reveal>
         </div>
 
+        {/* Stitched / Unstitched Tabs */}
         <div className="mb-14 flex justify-center">
           <div className="relative flex rounded-full border border-brown/15 p-1 dark:border-cream/15">
             {(['stitched', 'unstitched'] as const).map((t) => (
@@ -54,41 +64,28 @@ function ShopPageContent() {
           </div>
         </div>
 
-        {filtered.length > 0 ? (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Products with animated entrance, add to cart, quick view, favourite */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={tab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {filtered.map((product, i) => (
-              <motion.div
+              <ProductCard
                 key={product.id}
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                className="overflow-hidden rounded-3xl border border-brown/10 dark:border-cream/10"
-              >
-                <div
-                  className="aspect-[3/4] bg-cover bg-center"
-                  style={{ backgroundImage: `url(${product.image})` }}
-                />
-                <div className="p-5">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-gold">
-                    {product.tagline}
-                  </p>
-                  <h3 className="mt-1 font-serif text-2xl text-brown dark:text-cream">
-                    {product.name}
-                  </h3>
-                  <p className="mt-1 text-xs text-brown/40 dark:text-cream/40">
-                    Code: {product.code}
-                  </p>
-                  <p className="mt-3 text-sm text-brown/60 dark:text-cream/60">
-                    {product.fabric}
-                  </p>
-                  <p className="mt-4 font-serif text-2xl text-gradient-gold">
-                    {formatPKR(product.price)}
-                  </p>
-                </div>
-              </motion.div>
+                product={product}
+                index={i}
+                onQuickView={setQuickView}
+              />
             ))}
-          </div>
-        ) : (
+          </motion.div>
+        </AnimatePresence>
+
+        {filtered.length === 0 && (
           <div className="py-20 text-center">
             <Package className="mx-auto h-16 w-16 text-brown/20 dark:text-cream/20" />
             <p className="mt-4 font-serif text-2xl text-brown/50 dark:text-cream/50">
@@ -97,6 +94,8 @@ function ShopPageContent() {
           </div>
         )}
       </div>
+
+      <QuickViewModal product={quickView} onClose={() => setQuickView(null)} />
     </main>
   );
 }
