@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { motion } from 'framer-motion';
 import { Check, CreditCard, Lock } from 'lucide-react';
@@ -205,7 +205,7 @@ export default function CheckoutPage() {
                 </h2>
                 <div className="mt-4 flex items-center gap-2 text-xs text-brown/50 dark:text-cream/50">
                   <Lock className="h-3 w-3" />
-                  Secure payment — Cash on Delivery also available across Pakistan.
+                  Secure payment â€” Cash on Delivery also available across Pakistan.
                 </div>
                 <div className="mt-6 space-y-4">
                   <div className="relative">
@@ -249,7 +249,7 @@ export default function CheckoutPage() {
                     type="submit"
                     className="flex-1 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light py-4 text-sm font-medium uppercase tracking-wider text-brown-dark transition-shadow hover:glow-gold"
                   >
-                    Place Order — {formatPKR(grandTotal)}
+                    Place Order â€” {formatPKR(grandTotal)}
                   </motion.button>
                 </div>
               </Reveal>
@@ -292,10 +292,6 @@ export default function CheckoutPage() {
                   <span>Shipping</span>
                   <span>Free</span>
                 </div>
-                <div className="flex justify-between text-brown/60 dark:text-cream/60">
-                  <span>Tax</span>
-                  <span>{formatPKR(tax)}</span>
-                </div>
                 <div className="flex justify-between border-t border-brown/10 pt-2 dark:border-cream/10">
                   <span className="font-serif text-lg text-brown dark:text-cream">
                     Total
@@ -312,3 +308,4 @@ export default function CheckoutPage() {
     </main>
   );
 }
+
