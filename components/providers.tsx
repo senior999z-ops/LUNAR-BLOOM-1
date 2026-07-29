@@ -154,7 +154,9 @@ export function Providers({ children }: { children: ReactNode }) {
   const isHome = pathname === '/';
   const isCollections = pathname === '/collections';
   const isWishlist = pathname === '/wishlist';
-  const hideChrome = isHome || isCollections || isWishlist;
+  const isAbout = pathname === '/about';
+  const isContact = pathname === '/contact';
+  const hideChrome = isHome || isCollections || isWishlist || isAbout || isContact;
 
   useEffect(() => {
     if (sessionStorage.getItem('lb_loaded')) return;
