@@ -8,6 +8,7 @@
   category: 'pret' | 'formal' | 'accessories';
   type: 'stitched' | 'unstitched';
   image: string;
+  badge?: string;
   notes: string[];
   fabric: string;
   size: string;
@@ -25,6 +26,7 @@ export const products: Product[] = [
     category: 'pret',
     type: 'unstitched',
     image: '/products/lb01.png',
+    badge: 'New',
     notes: ['Poly Lawn', 'Chiffon Dupatta', 'Floral Print'],
     fabric: 'Poly Lawn Kameez & Trouser, Chiffon Dupatta',
     size: 'Unstitched — 3 Pieces',
