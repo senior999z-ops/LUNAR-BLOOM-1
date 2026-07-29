@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -114,7 +114,7 @@ export function Navbar() {
             </button>
 
             <Link
-              href="/shop"
+              href="/wishlist"
               className="rounded-full p-2 text-brown/70 transition-colors hover:text-gold dark:text-cream/70"
               aria-label="Wishlist"
             >
