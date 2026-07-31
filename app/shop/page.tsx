@@ -1,23 +1,32 @@
 ﻿'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
-import { Package, Scissors, Shirt } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Package, Scissors, Search, Shirt } from 'lucide-react';
 import { Suspense, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FloatingBackButton } from '@/components/floating-back-button';
-import { ProductCard } from '@/components/product-card';
-import { QuickViewModal } from '@/components/quick-view-modal';
 import { Reveal, TextReveal } from '@/components/reveal';
-import { products, type Product } from '@/lib/products';
+import { products, formatPKR } from '@/lib/products';
 import { cn } from '@/lib/utils';
 
 function ShopPageContent() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') === 'stitched' ? 'stitched' : 'unstitched';
   const [tab, setTab] = useState<'stitched' | 'unstitched'>(initialTab);
-  const [quickView, setQuickView] = useState<Product | null>(null);
+  const [search, setSearch] = useState('');
 
-  const filtered = useMemo(() => products.filter((p) => p.type === tab), [tab]);
+  const filtered = useMemo(() => {
+    let result = products.filter((p) => p.type === tab);
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.code.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [tab, search]);
 
   return (
     <main className="relative z-10 min-h-screen pt-32">
@@ -36,6 +45,19 @@ function ShopPageContent() {
               fabrics, handcrafted in Pakistan.
             </p>
           </Reveal>
+        </div>
+
+        {/* Search box */}
+        <div className="mx-auto mb-8 max-w-md">
+          <div className="flex items-center gap-2 rounded-full border border-brown/15 px-5 py-3 dark:border-cream/15">
+            <Search className="h-4 w-4 text-gold" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by name or product code..."
+              className="w-full bg-transparent text-sm text-brown outline-none placeholder:text-brown/40 dark:text-cream dark:placeholder:text-cream/40"
+            />
+          </div>
         </div>
 
         {/* Stitched / Unstitched Tabs */}
@@ -64,38 +86,59 @@ function ShopPageContent() {
           </div>
         </div>
 
-        {/* Products with animated entrance, add to cart, quick view, favourite */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={tab}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
-          >
+        {filtered.length > 0 ? (
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((product, i) => (
-              <ProductCard
+              <motion.div
                 key={product.id}
-                product={product}
-                index={i}
-                onQuickView={setQuickView}
-              />
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="overflow-hidden rounded-3xl border border-brown/10 dark:border-cream/10"
+              >
+                <div className="relative aspect-[3/4]">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${product.image})` }}
+                  />
+                  {product.badge && (
+                    <div className="absolute left-4 top-4 rounded-full bg-gradient-to-r from-gold-dark to-gold px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-brown-dark shadow-lg">
+                      {product.badge}
+                    </div>
+                  )}
+                  <div className="absolute right-4 top-4 rounded-full glass-strong px-3 py-1 text-[10px] uppercase tracking-wider text-gold">
+                    {product.type}
+                  </div>
+                </div>
+                <div className="p-5">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-gold">
+                    {product.tagline}
+                  </p>
+                  <h3 className="mt-1 font-serif text-2xl text-brown dark:text-cream">
+                    {product.name}
+                  </h3>
+                  <p className="mt-1 text-xs text-brown/40 dark:text-cream/40">
+                    Code: {product.code}
+                  </p>
+                  <p className="mt-3 text-sm text-brown/60 dark:text-cream/60">
+                    {product.fabric}
+                  </p>
+                  <p className="mt-4 font-serif text-2xl text-gradient-gold">
+                    {formatPKR(product.price)}
+                  </p>
+                </div>
+              </motion.div>
             ))}
-          </motion.div>
-        </AnimatePresence>
-
-        {filtered.length === 0 && (
+          </div>
+        ) : (
           <div className="py-20 text-center">
             <Package className="mx-auto h-16 w-16 text-brown/20 dark:text-cream/20" />
             <p className="mt-4 font-serif text-2xl text-brown/50 dark:text-cream/50">
-              More pieces coming soon in this section.
+              No pieces found. Try a different search.
             </p>
           </div>
         )}
       </div>
-
-      <QuickViewModal product={quickView} onClose={() => setQuickView(null)} />
     </main>
   );
 }
