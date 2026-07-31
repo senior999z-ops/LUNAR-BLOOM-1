@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import { Heart, Menu, Moon, Search, ShoppingBag, Sun, X } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCart, useWishlist } from '@/components/providers';
 import { cn } from '@/lib/utils';
 
@@ -22,9 +22,11 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { setIsOpen, count } = useCart();
   const { count: wishlistCount } = useWishlist();
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -36,6 +38,16 @@ export function Navbar() {
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (q) {
+      router.push('/shop?search=' + encodeURIComponent(q));
+      setSearchOpen(false);
+      setSearchQuery('');
+    }
+  };
 
   return (
     <>
@@ -49,7 +61,6 @@ export function Navbar() {
         )}
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-10">
-          {/* Logo */}
           <Link href="/" className="group flex flex-col items-start">
             <span className="font-script text-lg leading-none text-gold transition-transform group-hover:scale-110">
               Lunar Bloom
@@ -59,7 +70,6 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop nav - floating pill buttons */}
           <div className="hidden items-center gap-5 lg:flex">
             {NAV_LINKS.map((link, i) => (
               <motion.div
@@ -85,7 +95,6 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* Actions */}
           <div className="flex items-center gap-1 sm:gap-3 md:gap-4">
             <button
               onClick={() => setSearchOpen((v) => !v)}
@@ -155,7 +164,6 @@ export function Navbar() {
           </div>
         </nav>
 
-        {/* Search bar */}
         <AnimatePresence>
           {searchOpen && (
             <motion.div
@@ -166,22 +174,23 @@ export function Navbar() {
               className="overflow-hidden px-6 lg:px-10"
             >
               <div className="mx-auto max-w-2xl py-4">
-                <div className="glass flex items-center gap-3 rounded-full px-6 py-3">
+                <form onSubmit={handleSearch} className="glass flex items-center gap-3 rounded-full px-6 py-3">
                   <Search className="h-5 w-5 text-gold" />
                   <input
                     autoFocus
                     type="text"
-                    placeholder="Search the bloom..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by name or product code..."
                     className="w-full bg-transparent font-sans text-sm text-brown outline-none placeholder:text-brown/40 dark:text-cream dark:placeholder:text-cream/40"
                   />
-                </div>
+                </form>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.header>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div

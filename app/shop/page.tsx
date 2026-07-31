@@ -14,7 +14,7 @@ function ShopPageContent() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') === 'stitched' ? 'stitched' : 'unstitched';
   const [tab, setTab] = useState<'stitched' | 'unstitched'>(initialTab);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(searchParams.get('search') || '');
 
   const isSearching = search.trim().length > 0;
 
@@ -160,3 +160,4 @@ export default function ShopPage() {
     </Suspense>
   );
 }
+
