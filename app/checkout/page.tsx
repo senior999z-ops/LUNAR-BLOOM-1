@@ -25,8 +25,7 @@ export default function CheckoutPage() {
     cvc: '',
   });
 
-  const tax = Math.round(total * 0.08);
-  const grandTotal = total + tax;
+  const grandTotal = total;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -308,4 +307,5 @@ export default function CheckoutPage() {
     </main>
   );
 }
+
 
