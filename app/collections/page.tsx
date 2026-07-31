@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { FileText, Heart, Home, Info, Mail } from 'lucide-react';
+import { FileText, Heart, Home, Info, Mail, Sparkles } from 'lucide-react';
 import { FloatingButton } from '@/components/floating-button';
 
 const COLLECTIONS = [
@@ -15,7 +15,8 @@ const NAV_BUTTONS = [
   { label: 'About', href: '/about', icon: <Info className="h-4 w-4" /> },
   { label: 'Contact', href: '/contact', icon: <Mail className="h-4 w-4" /> },
   { label: 'Favourites', href: '/wishlist', icon: <Heart className="h-4 w-4" /> },
-  { label: 'Legal', href: '/legal', icon: <FileText className="h-4 w-4" /> },
+  { label: 'Policy', href: '/legal', icon: <FileText className="h-4 w-4" /> },
+  { label: 'Official Pages', href: '/social', icon: <Sparkles className="h-4 w-4" /> },
 ];
 
 export default function CollectionsPage() {

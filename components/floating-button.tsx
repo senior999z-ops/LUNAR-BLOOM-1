@@ -38,6 +38,7 @@ export function FloatingButton({
     { side: 'left' as const, offset: 18, y: 72 },
     { side: 'right' as const, offset: 14, y: 82 },
     { side: 'center' as const, offset: 0, y: 18 },
+    { side: 'center' as const, offset: 0, y: 90 },
   ];
 
   let startY: number;

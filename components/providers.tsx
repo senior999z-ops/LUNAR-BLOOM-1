@@ -157,7 +157,8 @@ export function Providers({ children }: { children: ReactNode }) {
   const isAbout = pathname === '/about';
   const isContact = pathname === '/contact';
   const isLegal = pathname === '/legal';
-  const hideChrome = isHome || isCollections || isWishlist || isAbout || isContact || isLegal;
+  const isSocial = pathname === '/social';
+  const hideChrome = isHome || isCollections || isWishlist || isAbout || isContact || isLegal || isSocial;
 
   useEffect(() => {
     if (sessionStorage.getItem('lb_loaded')) return;
@@ -198,3 +199,5 @@ export function Providers({ children }: { children: ReactNode }) {
     </ThemeProvider>
   );
 }
+
+
