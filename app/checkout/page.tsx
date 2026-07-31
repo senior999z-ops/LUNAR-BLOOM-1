@@ -14,6 +14,7 @@ export default function CheckoutPage() {
   const [step, setStep] = useState<'info' | 'payment' | 'done'>('info');
   const [form, setForm] = useState({
     email: '',
+    phone: '',
     firstName: '',
     lastName: '',
     address: '',
@@ -307,5 +308,7 @@ export default function CheckoutPage() {
     </main>
   );
 }
+
+
 
 
