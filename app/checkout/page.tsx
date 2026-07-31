@@ -25,8 +25,21 @@ export default function CheckoutPage() {
 
   const grandTotal = total;
 
+  const sendOrderEmail = async () => {
+    try {
+      await fetch('/api/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ form, items, total: grandTotal }),
+      });
+    } catch (err) {
+      console.error('Order email failed:', err);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    sendOrderEmail();
     setStep('done');
     setTimeout(() => {
       clearCart();
@@ -53,9 +66,8 @@ export default function CheckoutPage() {
             Order Confirmed
           </h1>
           <p className="mt-4 text-sm text-brown/60 dark:text-cream/60">
-            Shukriya for your purchase. Your LUNAR BLOOM piece is being crafted
-            with care and will be delivered across Pakistan. Pay in cash when
-            your order arrives.
+            Shukriya for your purchase. A confirmation email with your order
+            details has been sent to us. Pay in cash when your order arrives.
           </p>
           <Link
             href="/shop"
@@ -233,6 +245,3 @@ export default function CheckoutPage() {
     </main>
   );
 }
-
-
-
