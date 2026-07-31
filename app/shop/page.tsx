@@ -1,13 +1,14 @@
 ﻿'use client';
 
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Package, Scissors, Search, Shirt } from 'lucide-react';
-import Link from 'next/link';
 import { Suspense, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FloatingBackButton } from '@/components/floating-back-button';
+import { ProductCard } from '@/components/product-card';
+import { QuickViewModal } from '@/components/quick-view-modal';
 import { Reveal, TextReveal } from '@/components/reveal';
-import { products, formatPKR } from '@/lib/products';
+import { products, type Product } from '@/lib/products';
 import { cn } from '@/lib/utils';
 
 function ShopPageContent() {
@@ -15,14 +16,13 @@ function ShopPageContent() {
   const initialTab = searchParams.get('tab') === 'stitched' ? 'stitched' : 'unstitched';
   const [tab, setTab] = useState<'stitched' | 'unstitched'>(initialTab);
   const [search, setSearch] = useState(searchParams.get('search') || '');
+  const [quickView, setQuickView] = useState<Product | null>(null);
 
   const isSearching = search.trim().length > 0;
 
   const filtered = useMemo(() => {
     if (isSearching) {
       const q = search.trim().toLowerCase();
-      // While searching, look across both Stitched and Unstitched — not
-      // just whichever tab happens to be selected.
       return products.filter(
         (p) => p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q)
       );
@@ -49,7 +49,6 @@ function ShopPageContent() {
           </Reveal>
         </div>
 
-        {/* Search box */}
         <div className="mx-auto mb-8 max-w-md">
           <div className="flex items-center gap-2 rounded-full border border-brown/15 px-5 py-3 dark:border-cream/15">
             <Search className="h-4 w-4 text-gold" />
@@ -62,7 +61,6 @@ function ShopPageContent() {
           </div>
         </div>
 
-        {/* Stitched / Unstitched Tabs — hidden while actively searching */}
         {!isSearching && (
           <div className="mb-14 flex justify-center">
             <div className="relative flex rounded-full border border-brown/15 p-1 dark:border-cream/15">
@@ -92,55 +90,27 @@ function ShopPageContent() {
 
         {isSearching && <div className="mb-8" />}
 
-        {filtered.length > 0 ? (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={tab + search}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {filtered.map((product, i) => (
-              <motion.div
+              <ProductCard
                 key={product.id}
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <Link
-                  href={`/shop/${product.id}`}
-                  className="group block overflow-hidden rounded-3xl border border-brown/10 transition-colors hover:border-gold dark:border-cream/10"
-                >
-                  <div className="relative aspect-[3/4]">
-                    <div
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                      style={{ backgroundImage: `url(${product.image})` }}
-                    />
-                    {product.badge && (
-                      <div className="absolute left-4 top-4 rounded-full bg-gradient-to-r from-gold-dark to-gold px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-brown-dark shadow-lg">
-                        {product.badge}
-                      </div>
-                    )}
-                    <div className="absolute right-4 top-4 rounded-full glass-strong px-3 py-1 text-[10px] uppercase tracking-wider text-gold">
-                      {product.type}
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-gold">
-                      {product.tagline}
-                    </p>
-                    <h3 className="mt-1 font-serif text-2xl text-brown transition-colors group-hover:text-gold dark:text-cream">
-                      {product.name}
-                    </h3>
-                    <p className="mt-1 text-xs text-brown/40 dark:text-cream/40">
-                      Code: {product.code}
-                    </p>
-                    <p className="mt-3 text-sm text-brown/60 dark:text-cream/60">
-                      {product.fabric}
-                    </p>
-                    <p className="mt-4 font-serif text-2xl text-gradient-gold">
-                      {formatPKR(product.price)}
-                    </p>
-                  </div>
-                </Link>
-              </motion.div>
+                product={product}
+                index={i}
+                onQuickView={setQuickView}
+              />
             ))}
-          </div>
-        ) : (
+          </motion.div>
+        </AnimatePresence>
+
+        {filtered.length === 0 && (
           <div className="py-20 text-center">
             <Package className="mx-auto h-16 w-16 text-brown/20 dark:text-cream/20" />
             <p className="mt-4 font-serif text-2xl text-brown/50 dark:text-cream/50">
@@ -149,6 +119,8 @@ function ShopPageContent() {
           </div>
         )}
       </div>
+
+      <QuickViewModal product={quickView} onClose={() => setQuickView(null)} />
     </main>
   );
 }
@@ -160,4 +132,3 @@ export default function ShopPage() {
     </Suspense>
   );
 }
-
