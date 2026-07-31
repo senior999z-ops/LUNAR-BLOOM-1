@@ -6,7 +6,7 @@ export async function POST(request: Request) {
 
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: 'Email service not configured' }, { status: 500 });
+      return NextResponse.json({ error: 'RESEND_API_KEY is missing on the server' }, { status: 500 });
     }
 
     const itemRows = items
@@ -44,15 +44,17 @@ export async function POST(request: Request) {
       }),
     });
 
+    const resendBody = await res.text();
+
     if (!res.ok) {
-      const errorData = await res.text();
-      console.error('Resend order email error:', errorData);
-      return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+      // Temporary: surface the exact Resend error in the response itself so
+      // it shows up directly in the browser's Network tab, no Vercel log
+      // hunting needed.
+      return NextResponse.json({ error: 'Resend rejected the request', resendStatus: res.status, resendBody }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, resendBody });
   } catch (error) {
-    console.error('Order email error:', error);
-    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+    return NextResponse.json({ error: 'Exception thrown', details: String(error) }, { status: 500 });
   }
 }
