@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import { Heart, Menu, Moon, Search, ShoppingBag, Sun, X } from 'lucide-react';
+import { Heart, Menu, Moon, ShoppingBag, Sun, X } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useCart, useWishlist } from '@/components/providers';
 import { cn } from '@/lib/utils';
 
@@ -21,12 +21,9 @@ const NAV_LINKS = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const { setIsOpen, count } = useCart();
   const { count: wishlistCount } = useWishlist();
   const { theme, setTheme } = useTheme();
-  const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -38,16 +35,6 @@ export function Navbar() {
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = searchQuery.trim();
-    if (q) {
-      router.push('/shop?search=' + encodeURIComponent(q));
-      setSearchOpen(false);
-      setSearchQuery('');
-    }
-  };
 
   return (
     <>
@@ -96,14 +83,6 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-1 sm:gap-3 md:gap-4">
-            <button
-              onClick={() => setSearchOpen((v) => !v)}
-              className="rounded-full p-2 text-brown/70 transition-colors hover:text-gold dark:text-cream/70"
-              aria-label="Search"
-            >
-              <Search className="h-5 w-5" />
-            </button>
-
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="rounded-full p-2 text-brown/70 transition-colors hover:text-gold dark:text-cream/70"
@@ -163,32 +142,6 @@ export function Navbar() {
             </button>
           </div>
         </nav>
-
-        <AnimatePresence>
-          {searchOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden px-6 lg:px-10"
-            >
-              <div className="mx-auto max-w-2xl py-4">
-                <form onSubmit={handleSearch} className="glass flex items-center gap-3 rounded-full px-6 py-3">
-                  <Search className="h-5 w-5 text-gold" />
-                  <input
-                    autoFocus
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by name or product code..."
-                    className="w-full bg-transparent font-sans text-sm text-brown outline-none placeholder:text-brown/40 dark:text-cream dark:placeholder:text-cream/40"
-                  />
-                </form>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.header>
 
       <AnimatePresence>
