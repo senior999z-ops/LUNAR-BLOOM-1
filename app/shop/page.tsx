@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Package, Scissors, Search, Shirt } from 'lucide-react';
+import Link from 'next/link';
 import { Suspense, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FloatingBackButton } from '@/components/floating-back-button';
@@ -15,18 +16,19 @@ function ShopPageContent() {
   const [tab, setTab] = useState<'stitched' | 'unstitched'>(initialTab);
   const [search, setSearch] = useState('');
 
+  const isSearching = search.trim().length > 0;
+
   const filtered = useMemo(() => {
-    let result = products.filter((p) => p.type === tab);
-    if (search.trim()) {
+    if (isSearching) {
       const q = search.trim().toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.code.toLowerCase().includes(q)
+      // While searching, look across both Stitched and Unstitched — not
+      // just whichever tab happens to be selected.
+      return products.filter(
+        (p) => p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q)
       );
     }
-    return result;
-  }, [tab, search]);
+    return products.filter((p) => p.type === tab);
+  }, [tab, search, isSearching]);
 
   return (
     <main className="relative z-10 min-h-screen pt-32">
@@ -60,31 +62,35 @@ function ShopPageContent() {
           </div>
         </div>
 
-        {/* Stitched / Unstitched Tabs */}
-        <div className="mb-14 flex justify-center">
-          <div className="relative flex rounded-full border border-brown/15 p-1 dark:border-cream/15">
-            {(['stitched', 'unstitched'] as const).map((t) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={cn(
-                  'relative z-10 flex items-center gap-2 rounded-full px-8 py-3 text-sm font-medium uppercase tracking-wider transition-colors',
-                  tab === t ? 'text-brown-dark' : 'text-brown/60 hover:text-gold dark:text-cream/60'
-                )}
-              >
-                {t === 'stitched' ? <Shirt className="h-4 w-4" /> : <Scissors className="h-4 w-4" />}
-                {t}
-              </button>
-            ))}
-            <motion.div
-              layoutId="tab-pill"
-              className="absolute inset-y-1 left-1 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light shadow-lg"
-              style={{ width: 'calc(50% - 4px)' }}
-              animate={{ x: tab === 'stitched' ? 0 : 'calc(100% + 0px)' }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            />
+        {/* Stitched / Unstitched Tabs — hidden while actively searching */}
+        {!isSearching && (
+          <div className="mb-14 flex justify-center">
+            <div className="relative flex rounded-full border border-brown/15 p-1 dark:border-cream/15">
+              {(['stitched', 'unstitched'] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTab(t)}
+                  className={cn(
+                    'relative z-10 flex items-center gap-2 rounded-full px-8 py-3 text-sm font-medium uppercase tracking-wider transition-colors',
+                    tab === t ? 'text-brown-dark' : 'text-brown/60 hover:text-gold dark:text-cream/60'
+                  )}
+                >
+                  {t === 'stitched' ? <Shirt className="h-4 w-4" /> : <Scissors className="h-4 w-4" />}
+                  {t}
+                </button>
+              ))}
+              <motion.div
+                layoutId="tab-pill"
+                className="absolute inset-y-1 left-1 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light shadow-lg"
+                style={{ width: 'calc(50% - 4px)' }}
+                animate={{ x: tab === 'stitched' ? 0 : 'calc(100% + 0px)' }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              />
+            </div>
           </div>
-        </div>
+        )}
+
+        {isSearching && <div className="mb-8" />}
 
         {filtered.length > 0 ? (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -94,39 +100,43 @@ function ShopPageContent() {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                className="overflow-hidden rounded-3xl border border-brown/10 dark:border-cream/10"
               >
-                <div className="relative aspect-[3/4]">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${product.image})` }}
-                  />
-                  {product.badge && (
-                    <div className="absolute left-4 top-4 rounded-full bg-gradient-to-r from-gold-dark to-gold px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-brown-dark shadow-lg">
-                      {product.badge}
+                <Link
+                  href={`/shop/${product.id}`}
+                  className="group block overflow-hidden rounded-3xl border border-brown/10 transition-colors hover:border-gold dark:border-cream/10"
+                >
+                  <div className="relative aspect-[3/4]">
+                    <div
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                      style={{ backgroundImage: `url(${product.image})` }}
+                    />
+                    {product.badge && (
+                      <div className="absolute left-4 top-4 rounded-full bg-gradient-to-r from-gold-dark to-gold px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-brown-dark shadow-lg">
+                        {product.badge}
+                      </div>
+                    )}
+                    <div className="absolute right-4 top-4 rounded-full glass-strong px-3 py-1 text-[10px] uppercase tracking-wider text-gold">
+                      {product.type}
                     </div>
-                  )}
-                  <div className="absolute right-4 top-4 rounded-full glass-strong px-3 py-1 text-[10px] uppercase tracking-wider text-gold">
-                    {product.type}
                   </div>
-                </div>
-                <div className="p-5">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-gold">
-                    {product.tagline}
-                  </p>
-                  <h3 className="mt-1 font-serif text-2xl text-brown dark:text-cream">
-                    {product.name}
-                  </h3>
-                  <p className="mt-1 text-xs text-brown/40 dark:text-cream/40">
-                    Code: {product.code}
-                  </p>
-                  <p className="mt-3 text-sm text-brown/60 dark:text-cream/60">
-                    {product.fabric}
-                  </p>
-                  <p className="mt-4 font-serif text-2xl text-gradient-gold">
-                    {formatPKR(product.price)}
-                  </p>
-                </div>
+                  <div className="p-5">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-gold">
+                      {product.tagline}
+                    </p>
+                    <h3 className="mt-1 font-serif text-2xl text-brown transition-colors group-hover:text-gold dark:text-cream">
+                      {product.name}
+                    </h3>
+                    <p className="mt-1 text-xs text-brown/40 dark:text-cream/40">
+                      Code: {product.code}
+                    </p>
+                    <p className="mt-3 text-sm text-brown/60 dark:text-cream/60">
+                      {product.fabric}
+                    </p>
+                    <p className="mt-4 font-serif text-2xl text-gradient-gold">
+                      {formatPKR(product.price)}
+                    </p>
+                  </div>
+                </Link>
               </motion.div>
             ))}
           </div>
