@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         from: 'LUNAR BLOOM Orders <onboarding@resend.dev>',
-        to: ['support.lunarbloom.pk@gmail.com'],
+        to: ['senior999z@gmail.com'],
         reply_to: form.email,
         subject: `New Order — ${form.firstName} ${form.lastName}`,
         html: `
@@ -58,3 +58,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Exception thrown', details: String(error) }, { status: 500 });
   }
 }
+
