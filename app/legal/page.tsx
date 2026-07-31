@@ -30,7 +30,7 @@ export default function LegalPage() {
             <p className="font-script text-2xl text-gold">The Fine Print</p>
           </Reveal>
           <h1 className="mt-2 font-serif text-5xl font-light text-brown dark:text-cream md:text-7xl">
-            <TextReveal text="Official Pages" />
+            <TextReveal text="Policy & Terms" />
           </h1>
         </div>
 

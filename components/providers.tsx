@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { ThemeProvider } from 'next-themes';
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
@@ -156,7 +156,8 @@ export function Providers({ children }: { children: ReactNode }) {
   const isWishlist = pathname === '/wishlist';
   const isAbout = pathname === '/about';
   const isContact = pathname === '/contact';
-  const hideChrome = isHome || isCollections || isWishlist || isAbout || isContact;
+  const isLegal = pathname === '/legal';
+  const hideChrome = isHome || isCollections || isWishlist || isAbout || isContact || isLegal;
 
   useEffect(() => {
     if (sessionStorage.getItem('lb_loaded')) return;
