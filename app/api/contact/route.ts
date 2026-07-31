@@ -16,8 +16,8 @@ export async function POST(request: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'LUNAR BLOOM Website <onboarding@resend.dev>',
-        to: ['senior999z@gmail.com'],
+        from: 'LUNAR BLOOM Website <hello@lunarbloomofficial.com>',
+        to: ['support.lunarbloom.pk@gmail.com'],
         reply_to: email,
         subject: `New message from ${name}`,
         html: `
@@ -44,4 +44,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }
+
+
 
