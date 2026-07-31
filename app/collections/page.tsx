@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { Heart, Home, Info, Mail } from 'lucide-react';
+import { FileText, Heart, Home, Info, Mail } from 'lucide-react';
 import { FloatingButton } from '@/components/floating-button';
 
 const COLLECTIONS = [
@@ -15,6 +15,7 @@ const NAV_BUTTONS = [
   { label: 'About', href: '/about', icon: <Info className="h-4 w-4" /> },
   { label: 'Contact', href: '/contact', icon: <Mail className="h-4 w-4" /> },
   { label: 'Favourites', href: '/wishlist', icon: <Heart className="h-4 w-4" /> },
+  { label: 'Legal', href: '/legal', icon: <FileText className="h-4 w-4" /> },
 ];
 
 export default function CollectionsPage() {
@@ -39,9 +40,7 @@ export default function CollectionsPage() {
 
   return (
     <main className="relative z-10 h-screen overflow-hidden">
-      {/* Ambient background */}
       <div className="absolute inset-0">
-        {/* Floating golden orbs — static (no blur animation) on mobile */}
         {[...Array(orbCount)].map((_, i) =>
           isMobile ? (
             <div
@@ -83,7 +82,6 @@ export default function CollectionsPage() {
           )
         )}
 
-        {/* Twinkling stars */}
         {stars.map((s) => (
           <motion.div
             key={`star-${s.id}`}
@@ -104,7 +102,6 @@ export default function CollectionsPage() {
         ))}
       </div>
 
-      {/* Minimal title */}
       <motion.div
         initial={{ opacity: 0, filter: 'blur(10px)' }}
         animate={{ opacity: 1, filter: 'blur(0px)' }}
@@ -117,7 +114,6 @@ export default function CollectionsPage() {
         </h1>
       </motion.div>
 
-      {/* Floating collection buttons */}
       {COLLECTIONS.map((col, i) => (
         <FloatingButton
           key={col.label}
@@ -130,7 +126,6 @@ export default function CollectionsPage() {
         />
       ))}
 
-      {/* Floating nav buttons */}
       {NAV_BUTTONS.map((nav, i) => (
         <FloatingButton
           key={nav.label}
@@ -145,7 +140,6 @@ export default function CollectionsPage() {
         />
       ))}
 
-      {/* Hint at bottom */}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

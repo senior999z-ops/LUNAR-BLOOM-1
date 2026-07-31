@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -32,39 +32,40 @@ export function FloatingButton({
   const [mounted, setMounted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Nav buttons snap to one of 4 safe corners. Right-side corners are
-  // anchored from the right edge (not left), so a long label like
-  // "FAVOURITES" grows inward instead of overflowing off-screen.
   const NAV_CORNERS = [
     { side: 'left' as const, offset: 18, y: 18 },
     { side: 'right' as const, offset: 14, y: 27 },
     { side: 'left' as const, offset: 18, y: 72 },
     { side: 'right' as const, offset: 14, y: 82 },
+    { side: 'center' as const, offset: 0, y: 18 },
   ];
 
   let startY: number;
   let horizontalStyle: { left?: string; right?: string };
+  let isCenter = false;
 
   if (variant === 'nav') {
     const corner = NAV_CORNERS[index % NAV_CORNERS.length];
     startY = corner.y;
-    horizontalStyle = corner.side === 'left' ? { left: `${corner.offset}%` } : { right: `${corner.offset}%` };
+    if (corner.side === 'left') {
+      horizontalStyle = { left: `${corner.offset}%` };
+    } else if (corner.side === 'right') {
+      horizontalStyle = { right: `${corner.offset}%` };
+    } else {
+      horizontalStyle = { left: '50%' };
+      isCenter = true;
+    }
   } else {
-    // Both collection circles sit side by side — one anchored from the
-    // left edge, one from the right — so neither can ever be clipped
-    // off-screen. Stitched (left) sits a touch higher than Unstitched.
     const isFirst = index % 2 === 0;
     startY = isFirst ? 38 : 50;
     horizontalStyle = isFirst ? { left: '8%' } : { right: '8%' };
   }
 
-  // Floating motion
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const sx = useSpring(x, { stiffness: 40, damping: 12 });
   const sy = useSpring(y, { stiffness: 40, damping: 12 });
 
-  // Mouse parallax
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const px = useSpring(mx, { stiffness: 100, damping: 20 });
@@ -78,9 +79,6 @@ export function FloatingButton({
   useEffect(() => {
     setMounted(true);
 
-    // Gentle floating animation with unique phase per button. Only updates
-    // every other frame — running full-speed on all 6 buttons at once was
-    // the main cause of the mobile stutter.
     let frame = 0;
     const phase = index * 1.3;
     const speedX = variant === 'collection' ? 0.0003 : 0.0004;
@@ -128,7 +126,7 @@ export function FloatingButton({
           x: sx,
           y: sy,
         }}
-        className="absolute z-20"
+        className={cn('absolute z-20', isCenter && '-translate-x-1/2')}
       >
         <motion.div style={{ x: px, y: py, rotate }}>
           <motion.button
@@ -138,14 +136,13 @@ export function FloatingButton({
             animate={clicked ? { scale: [1, 1.3, 0] } : { scale: hovered ? 1.15 : 1 }}
             transition={{ duration: clicked ? 0.6 : 0.3 }}
             data-cursor-label={label}
-            className="flex items-center gap-2 rounded-full glass-strong px-6 py-3 text-xs font-medium uppercase tracking-[0.2em] text-brown shadow-lg dark:text-cream"
+            className="flex items-center gap-2 whitespace-nowrap rounded-full glass-strong px-6 py-3 text-xs font-medium uppercase tracking-[0.2em] text-brown shadow-lg dark:text-cream"
           >
             {icon}
             {label}
           </motion.button>
         </motion.div>
 
-        {/* Click ripple */}
         {clicked && (
           <motion.div
             initial={{ scale: 0, opacity: 0.5 }}
@@ -184,9 +181,7 @@ export function FloatingButton({
           data-cursor-label={label}
           className="group relative flex flex-col items-center gap-3"
         >
-          {/* Image circle */}
           <div className="relative">
-            {/* Glow ring on hover */}
             <motion.div
               className="absolute -inset-2 rounded-full"
               animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1.1 : 0.8 }}
@@ -197,14 +192,12 @@ export function FloatingButton({
               }}
             />
 
-            {/* Rotating border ring */}
             <motion.div
               className="absolute -inset-1 rounded-full border border-dashed border-gold/30"
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
             />
 
-            {/* Image */}
             <div
               className={cn(
                 'relative overflow-hidden rounded-full border-2 transition-colors',
@@ -221,7 +214,6 @@ export function FloatingButton({
                 className="absolute inset-0 bg-cover bg-center"
                 style={{ backgroundImage: `url(${image})` }}
               />
-              {/* Dark veil that fades on hover */}
               <motion.div
                 className="absolute inset-0 bg-brown-dark/50"
                 animate={{ opacity: hovered ? 0 : 0.4 }}
@@ -229,7 +221,6 @@ export function FloatingButton({
               />
             </div>
 
-            {/* Click burst */}
             {clicked && (
               <>
                 {[...Array(8)].map((_, i) => (
@@ -250,11 +241,10 @@ export function FloatingButton({
             )}
           </div>
 
-          {/* Label */}
           <motion.span
             animate={{ scale: hovered ? 1.1 : 1 }}
             className={cn(
-              'rounded-full px-5 py-2 text-xs font-medium uppercase tracking-[0.2em] transition-colors',
+              'whitespace-nowrap rounded-full px-5 py-2 text-xs font-medium uppercase tracking-[0.2em] transition-colors',
               hovered
                 ? 'bg-gradient-to-r from-gold-dark to-gold text-brown-dark'
                 : 'glass-strong text-brown dark:text-cream',
