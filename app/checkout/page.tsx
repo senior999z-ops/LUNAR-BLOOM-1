@@ -108,7 +108,7 @@ export default function CheckoutPage() {
           </h1>
         </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-3">
+        <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-2">
           <form onSubmit={handleSubmit} className="lg:col-span-2">
             <Reveal>
               <h2 className="font-serif text-2xl text-brown dark:text-cream">
@@ -158,19 +158,12 @@ export default function CheckoutPage() {
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
                   className="w-full rounded-2xl border border-brown/15 bg-cream-50/50 px-5 py-3 text-sm text-brown outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 dark:border-cream/15 dark:bg-cream/5 dark:text-cream"
                 />
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <input
                     required
                     placeholder="City"
                     value={form.city}
                     onChange={(e) => setForm({ ...form, city: e.target.value })}
-                    className="rounded-2xl border border-brown/15 bg-cream-50/50 px-5 py-3 text-sm text-brown outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 dark:border-cream/15 dark:bg-cream/5 dark:text-cream"
-                  />
-                  <input
-                    required
-                    placeholder="Postal Code"
-                    value={form.zip}
-                    onChange={(e) => setForm({ ...form, zip: e.target.value })}
                     className="rounded-2xl border border-brown/15 bg-cream-50/50 px-5 py-3 text-sm text-brown outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 dark:border-cream/15 dark:bg-cream/5 dark:text-cream"
                   />
                   <input
@@ -245,3 +238,5 @@ export default function CheckoutPage() {
     </main>
   );
 }
+
+
