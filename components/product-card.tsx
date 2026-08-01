@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { motion } from 'framer-motion';
 import { Eye, Heart, ShoppingBag } from 'lucide-react';
@@ -22,8 +22,8 @@ export function ProductCard({ product, index, onQuickView }: ProductCardProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
-      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.7, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className="group relative"
@@ -140,7 +140,7 @@ export function ProductCard({ product, index, onQuickView }: ProductCardProps) {
           </svg>
         </div>
 
-        {/* Info — minimal, just name */}
+        {/* Info â€” minimal, just name */}
         <div className="p-5">
           <Link href={`/shop/${product.id}`}>
             <h3 className="font-serif text-xl text-brown transition-colors hover:text-gold dark:text-cream">
@@ -155,3 +155,4 @@ export function ProductCard({ product, index, onQuickView }: ProductCardProps) {
     </motion.div>
   );
 }
+

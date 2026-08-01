@@ -160,6 +160,13 @@ export function Providers({ children }: { children: ReactNode }) {
   const isSocial = pathname === '/social';
   const hideChrome = isHome || isCollections || isWishlist || isAbout || isContact || isLegal || isSocial;
 
+  // The animated star/petal background is decorative — it was running on
+  // every single page (shop grid, cart, checkout) which is where most of
+  // the perceived slowness was coming from. Now it only shows on the
+  // "branded" pages where it adds atmosphere; functional/shopping pages
+  // stay light and fast.
+  const showAmbientBackground = isHome || isCollections || isAbout || isContact || isLegal || isSocial;
+
   useEffect(() => {
     if (sessionStorage.getItem('lb_loaded')) return;
     setLoading(true);
@@ -181,7 +188,7 @@ export function Providers({ children }: { children: ReactNode }) {
         <CartProvider>
           <WishlistProvider>
             <div className="custom-cursor-active relative min-h-screen overflow-x-hidden">
-              <GlobalBackground />
+              {showAmbientBackground && <GlobalBackground />}
               {!isHome && <ScrollProgress />}
               <AnimatePresence>{loading && <Loader key="loader" />}</AnimatePresence>
               <CustomCursor />
@@ -199,5 +206,3 @@ export function Providers({ children }: { children: ReactNode }) {
     </ThemeProvider>
   );
 }
-
-
